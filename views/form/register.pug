@@ -1,0 +1,34 @@
+extends ../layout
+
+append javascript
+  script(src="/axios.min.js")
+  script(src="/javascripts/form-errors.js")
+  script(src="/javascripts/get-form-data.js")
+  script(src="/javascripts/register.js")
+
+block content
+  h1 Crear cuenta
+  .row
+    form.col.s12(id="register", action="/api/users/register", method="POST")
+      .row
+        .input-field.col.s6
+          input.validate(placeholder="Nombre(s)", id="firstname", name="firstname", type="text")
+        .input-field.col.s6
+          input.validate(placeholder="Apellido(s)", id="lastname", name="lastname", type="text")
+      .row
+        .input-field.col.s12
+          input.validate(name="email", id="email", type="email", placeholder="Correo electronico")
+      .row
+        .input-field.col.s6
+          input.validate(name="password", id="password", type="password", placeholder="Contraseña")
+        .input-field.col.s6
+          input.validate(name="password2", id="password2", type="password", placeholder="Confirmación de contraseña")
+      .row
+        .input-field.col.s12
+          input.validate(name="university", id="university", type="text", placeholder="Universidad")
+      .row
+        .input-field.col.s12
+          input.validate(name="birthdate", id="birthdate", type="date", placeholder="Fecha de nacimiento")
+      .row
+        button.btn(type="submit", id="submit") Registrarme
+        

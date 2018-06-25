@@ -3,5 +3,9 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    block javascript
+      script(src="/jquery.min.js")
   body
-    block content
+    .container
+      block content
+      
