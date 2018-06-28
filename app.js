@@ -7,6 +7,7 @@ var sassMiddleware = require("node-sass-middleware");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+const keys = require("./config/keys");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -24,6 +25,7 @@ const db = require("./config/keys").mongoURI;
 mongoose
   .connect(db)
   .then(() => console.log("mongo db connected"))
+  .then(() => require("./migrations/index").migrate())
   .catch(err => console.log(err));
 
 //passport middleware

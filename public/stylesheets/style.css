@@ -12193,12 +12193,21 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
     -webkit-transform: none;
     transform: none; } }
 
+#activate-message {
+  display: block;
+  transition: 3s; }
+  #activate-message.hidding {
+    opacity: 0;
+    transform: translateY(-100px); }
+  #activate-message.hide {
+    display: none; }
+
 #register {
   transition: .3s; }
   #register input.danger {
     background-color: #f32f4d;
     color: white; }
   #register.success {
-    background-color: #2bdb52; }
+    opacity: 0; }
 
 /*# sourceMappingURL=style.css.map */

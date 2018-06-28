@@ -9,7 +9,9 @@ var UserSchema = new Schema({
   avatar: { type: String, required: false },
   university: { type: String, required: false },
   birthdate: { type: Date, required: false },
-  createdAt: { type: Date, default: Date.now }
+  active: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model("users", UserSchema);
