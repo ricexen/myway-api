@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
+const RolePermission = require("./RolePermissionModel");
 
 var UserSchema = new Schema({
   firstname: { type: String, required: true },
@@ -11,7 +12,14 @@ var UserSchema = new Schema({
   birthdate: { type: Date, required: false },
   active: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+  rolePermission: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "RolePermission",
+      required: false
+    }
+  ]
 });
 
 module.exports = mongoose.model("users", UserSchema);
