@@ -1,21 +1,15 @@
 const mongoose = require("mongoose");
 const keys = require("../config/keys");
 const migrations = [
-  // require("./users/roles"),
-  // require("./users/permissions"),
-  // require("./users/rolePermissions"),
-  // require("./users/admins"),
-  require("./inventory/categories")
+  require("./users/roles"),
+  require("./users/permissions"),
+  require("./users/rolePermissions"),
+  require("./users/admins")
 ];
-function migrate() {
-  console.log("Migrations initiated...");
-  for (var i = 0; i < migrations.length; i++) {
-    migrations[i].migrate();
-  }
-}
+
+console.log(keys.mongoURI)
 
 mongoose
-  .connect(keys.MongoDB)
+  .connect(keys.mongoURI)
   .then(() => console.log("MongoDB connected"))
-  .then(() => migrate())
-  .catch(err => console.log());
+  .catch(err => console.log(err));
