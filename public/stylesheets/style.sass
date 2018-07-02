@@ -1,10 +1,20 @@
 @import 'node_modules/materialize-css/sass/materialize'
 @import 'node_modules/animate.sass/scss/animate'
 
+#activate-message
+  display: block
+  transition: 3s
+  &.hidding
+    opacity: 0
+    transform: translateY(-100px)
+  &.hide
+    display: none
+
 #register
   transition: .3s;
   input.danger
     background-color: #f32f4d
     color: white
   &.success
-    background-color: #2bdb52
+    opacity: 0
+    transform: 

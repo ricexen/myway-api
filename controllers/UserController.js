@@ -1,7 +1,6 @@
-var UserModel = require("../models/UserModel.js");
+var User = require("../models/users/UserModel.js");
 const validateRegisterInput = require("./validation/register");
 const validateLoginInput = require("./validation/login");
-const User = require("../models/UserModel");
 const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -81,7 +80,7 @@ module.exports = {
             lastname: userLog.lastname,
             avatar: userLog.avatar,
             university: userLog.university,
-            birthdate: userLog.birthdate            
+            birthdate: userLog.birthdate
           };
           jwt.sign(
             payload,
