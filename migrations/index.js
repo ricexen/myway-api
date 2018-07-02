@@ -1,13 +1,15 @@
-var index = 0;
+const mongoose = require("mongoose");
+const keys = require("../config/keys");
 const migrations = [
-  // require("./users/permissions"),
-  // require("./users/roles"),
-  require("./users/rolePermissions")
+  require("./users/roles"),
+  require("./users/permissions"),
+  require("./users/rolePermissions"),
+  require("./users/admins")
 ];
-const migrate = () => {
-  migrations.forEach(migration => {
-    migration.migrate();
-  });
-};
 
-module.exports = { migrations: migrations, migrate: migrate };
+console.log(keys.mongoURI)
+
+mongoose
+  .connect(keys.mongoURI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log(err));
