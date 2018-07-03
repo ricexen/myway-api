@@ -58,6 +58,7 @@ const permissions = [
 
 module.exports = {
   migrate: () => {
+    console.log("Permission migration initiated...")
     for (var i = 0; i < permissions.length; i++) {
       const permission = new Permission(permissions[i]);
       console.log("Row[%i]: ", i);

@@ -65,7 +65,7 @@ module.exports = {
       }
     });
     Role.findOne({ key: "publisher" }).exec((err, role) => {
-      Permissions.find({ key: { $in: publisherPermissions } }).exec(
+      Permission.find({ key: { $in: publisherPermissions } }).exec(
         (err, permissions) => {
           const rolePermission = new RolePermission({
             role: role,

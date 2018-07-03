@@ -7,9 +7,14 @@ const migrations = [
   require("./users/admins")
 ];
 
-console.log(keys.mongoURI)
+console.log(keys.mongoURI);
 
 mongoose
   .connect(keys.mongoURI)
   .then(() => console.log("MongoDB connected"))
+  .then(() => {
+    for (var i = 0; i < migrations.length; i++) {
+      migrations[i].migrate();
+    }
+  })
   .catch(err => console.log(err));
