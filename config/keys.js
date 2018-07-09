@@ -1,5 +1,6 @@
 require("dotenv").config();
+const user = (mongoDBURI = process.env.MONGO_URI);
 module.exports = {
-  mongoURI: "mongodb://admin:abc123@ds115971.mlab.com:15971/maiwey",
+  mongoURI: mongoDBURI,
   secretKey: "Bearer"
 };
