@@ -18,6 +18,7 @@
     "dotenv": "^6.0.0",
     "express": "~4.16.0",
     "express-mailer": "^0.3.1",
+    "gpx-parse": "^0.10.4",
     "gravatar": "^1.6.0",
     "http-errors": "~1.6.2",
     "jquery": "^3.3.1",
