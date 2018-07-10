@@ -61,6 +61,16 @@ typings/
 
 # next.js build output
 .next
+<<<<<<< HEAD
 
 # configurations
 .vscode
+=======
+yarn.lock
+package-lock.json
+<<<<<<< HEAD
+.vscode
+=======
+.vscode
+>>>>>>> 484ae23007203052ee4804f5f343a3a0524a3b39
+>>>>>>> migrations
