@@ -7,7 +7,6 @@ var sassMiddleware = require("node-sass-middleware");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const keys = require("./config/keys");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");

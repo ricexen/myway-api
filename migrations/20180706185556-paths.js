@@ -1,56 +1,78 @@
 "use strict";
-const fs = require("fs");
 const ospath = require("path");
-const gpx = require("gpx-parse");
+const File = require("../helpers/Util").File;
 const Path = require("../models/transports/PathModel");
-const ObjectId = require("mongoose").Schema.Types.ObjectId;
-var idsAdded = [];
-const tracksDir = __dirname + "/../test-data/tracks";
-var writeIdsAdded = () => {
-  fs.writeFile(
-    __dirname + "/../test-data/tracks/added.json",
-    JSON.stringify(idsAdded),
-    "utf8",
-    (err, data) => {
-      if (err) console.log(err);
-    }
-  );
-};
+const DataBase = require("../helpers/DatabaseUtil");
+const ObjectId = require("mongodb").ObjectID;
+
+var paths = [];
+var gpxCount = 0;
+const tracksDir = __dirname + "/../database/tracks/";
 
 module.exports = {
   up(db, next) {
-    fs.readdir(tracksDir, (err, files) => {
-      if (err) console.log(err);
-      else {
-        for (var i = 0, path; i < files.length; i++) {
-          const file = tracksDir + "/" + files[i];
-          if (ospath.extname(file) == ".gpx") {
-            gpx.parseGpxFromFile(file, (err, gpx) => {
+    File.listDirectory(tracksDir)
+      .then(files => {
+        gpxCount = gpxFilesCount(files);
+        files.forEach(filename => {
+          const file = tracksDir + filename;
+          trackFromGpx(file)
+            .then(track => {
               const path = new Path({
-                name: gpx.tracks[0].name,
-                line: gpx.tracks[0].segments[0].map(segment => {
-                  return { lat: segment.lat, lon: segment.lon };
-                })
+                name: track.name,
+                line: track.points
               });
               path.save();
-              idsAdded.push(path._id);
-            });
-          }
-        }
-      }
-
-      next();
-    });
+              paths.push(path);
+              if (gpxCount == paths.length) {
+                db.collection("paths").insert(paths, (err, inserted) => {
+                  if (err) console.log(err);
+                  else
+                    DataBase.writeIdentifiers(inserted.ops)
+                      .then(next())
+                      .catch(err => console.log(err));
+                });
+              }
+            })
+            .catch(err => console.log(err));
+        });
+      })
+      .catch(err => console.log(err));
   },
 
   down(db, next) {
-    // idsAdded = require("../test-data/tracks/added.json");
-    // console.log(idsAdded);
-    // for (var i = 0, id = idsAdded[i]; i < idsAdded.length; i++) {
-    //   db.collection("paths").remove(ObjectId(id), (err, obj) => {
-    //     if (err) console.log(err);
-    //   });
-    // }
+    var ids = require("../database/.temp/paths.json");
+    db.collection("paths").remove(
+      { _id: { $in: ids.map(id => ObjectId(id)) } },
+      (err, commandResult) => {
+        if (err) console.log(err);
+        else console.log(commandResult.result, "Done");
+      }
+    );
     next();
   }
+};
+
+var trackFromGpx = file => {
+  return new Promise((resolve, reject) => {
+    File.xmlToJson(file)
+      .then(xml => {
+        var track = {
+          name: xml.gpx.trk[0].name,
+          points: xml.gpx.trk[0].trkseg[0].trkpt.map(
+            trackPoint => trackPoint["$"]
+          )
+        };
+        resolve(track);
+      })
+      .catch(err => reject(err));
+  });
+};
+
+var gpxFilesCount = (files = []) => {
+  var count = 0;
+  for (var i = 0; i < files.length; i++) {
+    if (ospath.extname(files[i]) == ".gpx") count++;
+  }
+  return count;
 };
