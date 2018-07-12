@@ -16,7 +16,7 @@ module.exports = {
       });
     },
     writeJson(json, filename) {
-      return new Promise((reject, resolve) => {
+      return new Promise((resolve, reject) => {
         var data = JSON.stringify(json);
         fs.writeFile(filename, data, "utf8", err => {
           if (err) reject(err);

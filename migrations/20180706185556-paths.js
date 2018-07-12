@@ -11,33 +11,34 @@ const tracksDir = __dirname + "/../database/tracks/";
 
 module.exports = {
   up(db, next) {
-    File.listDirectory(tracksDir)
-      .then(files => {
-        gpxCount = gpxFilesCount(files);
-        files.forEach(filename => {
-          const file = tracksDir + filename;
-          trackFromGpx(file)
-            .then(track => {
-              const path = new Path({
-                name: track.name,
-                line: track.points
-              });
-              path.save();
-              paths.push(path);
-              if (gpxCount == paths.length) {
-                db.collection("paths").insert(paths, (err, inserted) => {
-                  if (err) console.log(err);
-                  else
-                    DataBase.writeIdentifiers(inserted.ops)
-                      .then(next())
-                      .catch(err => console.log(err));
-                });
-              }
-            })
-            .catch(err => console.log(err));
-        });
-      })
-      .catch(err => console.log(err));
+    // File.listDirectory(tracksDir)
+    //   .then(files => {
+    //     gpxCount = gpxFilesCount(files);
+    //     files.forEach(filename => {
+    //       const file = tracksDir + filename;
+    //       trackFromGpx(file)
+    //         .then(track => {
+    //           const path = new Path({
+    //             name: track.name,
+    //             line: track.points
+    //           });
+    //           path.save();
+    //           paths.push(path);
+    //           if (gpxCount == paths.length) {
+    //             db.collection("paths").insert(paths, (err, inserted) => {
+    //               if (err) console.log(err);
+    //               else
+    //                 DataBase.writeIdentifiers(inserted.ops)
+    //                   .then(next())
+    //                   .catch(err => console.log(err));
+    //             });
+    //           }
+    //         })
+    //         .catch(err => console.log(err));
+    //     });
+    //   })
+    //   .catch(err => console.log(err));
+    next();
   },
 
   down(db, next) {
