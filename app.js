@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // DB CONF
-const db = require("./config/keys").mongoURI;
+const db = keys.mongoURI;
 
 // Connect to MongoDB using Mongoose
 mongoose
