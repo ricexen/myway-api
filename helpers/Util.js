@@ -1,4 +1,5 @@
 const fs = require("fs");
+const ospath = require("path");
 const xmlParser = new require("xml2js").Parser();
 module.exports = {
   File: {
@@ -29,6 +30,29 @@ module.exports = {
         fs.readdir(dir, (err, files) => {
           if (err) reject(err);
           else resolve(files);
+        });
+      });
+    },
+    listFiles(dir, ext) {
+      ext = "." + ext;
+      return new Promise((resolve, reject) => {
+        this.listDirectory(dir)
+          .then(files => {
+            var filesWithExtension = [];
+            for (var i = 0; i < files.length; i++) {
+              if (ospath.extname(files[i]) == ext)
+                filesWithExtension.push(dir + files[i]);
+            }
+            resolve(filesWithExtension);
+          })
+          .catch(err => reject(err));
+      });
+    },
+    delete(filename) {
+      return new Promise((resolve, reject) => {
+        fs.unlink(filename, err => {
+          if (err) reject(err);
+          else resolve(filename);
         });
       });
     }
@@ -74,6 +98,9 @@ module.exports = {
     },
     isLastIndex(index, array = []) {
       return index == array.length - 1;
+    },
+    areSameLenght(object1, object2) {
+      return object1.length == object2.length;
     }
   }
 };
