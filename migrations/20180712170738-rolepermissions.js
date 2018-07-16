@@ -8,7 +8,7 @@ var rolepermissions = require("../database/collections/rolepermissions.json");
 
 module.exports = {
   up(db, next) {
-    RolePermissionToModels(rolepermissions, db)
+    RolePermissionsToModels(rolepermissions, db)
       .then(rolepermissions => {
         DatabaseHelper.insert({
           database: db,
@@ -28,12 +28,12 @@ module.exports = {
   }
 };
 
-var RolePermissionToModels = (rolepermissions, db) => {
+var RolePermissionsToModels = (rolepermissions, db) => {
   return new Promise((resolve, reject) => {
     var rolepermissionsMapped = [];
     for (let i = 0; i < rolepermissions.length; i++) {
       const rp = rolepermissions[i];
-      RolePermissionToModel(rp.role, rp.permissions, db)
+      RolePermissionToModel(rp, db)
         .then(rolepermission => {
           rolepermissionsMapped.push(rolepermission);
           if (Validation.areSameLenght(rolepermissionsMapped, rolepermissions))
@@ -47,10 +47,12 @@ var RolePermissionToModels = (rolepermissions, db) => {
   });
 };
 
-var RolePermissionToModel = (role, permissions, db) => {
+var RolePermissionToModel = (rolepermission, db) => {
   return new Promise((resolve, reject) => {
+    var role = rolepermission.role;
+    var permissions = rolepermission.permissions;
     db.collection("roles").findOne({ key: role }, (err, role) => {
-      if (err) reject(err0);
+      if (err) reject(err);
       db.collection("permissions")
         .find({ key: { $in: permissions } })
         .toArray()

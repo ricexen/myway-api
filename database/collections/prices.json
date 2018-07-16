@@ -1,0 +1,14 @@
+[
+  {
+    "_id": "normal-15.0",
+    "value": 15.0,
+    "statrtime": "06:00",
+    "endtime": "17:59"
+  },
+  {
+    "_id": "normal-14.5",
+    "value": 14.5,
+    "statrtime": "05:00",
+    "endtime": "17:59"
+  }
+]

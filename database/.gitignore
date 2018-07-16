@@ -1,1 +1,2 @@
-tracks/*.gpx
+collections/tracks/*.gpx
+.temp/*.*
