@@ -1,7 +1,6 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-// Creates a LineString Schema.
 var PathSchema = new Schema({
   name: { type: String, required: true },
   line: [{ lat: Number, lon: Number }],
