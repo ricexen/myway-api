@@ -1,41 +1,29 @@
 "use strict";
-const DatabaseUtil = require("../helpers/DatabaseUtil");
+const DatabaseHelper = require("../helpers/DatabaseHelper");
 const ObjectId = require("mongodb").ObjectID;
 const Role = require("../models/users/RoleModel");
 
-var roles = require("../database/collections/roles.json"),
-  collection = "roles";
+const collection = "roles";
+const roles = require("../database/collections/roles.json").map(r => {
+  const role = new Role(r);
+  role.save();
+  return role;
+});
 
 module.exports = {
   up(db, next) {
-    roles = roles.map(r => {
-      const role = new Role(r);
-      role.save();
-      return role;
-    });
-    db.collection(collection).insert(roles, (err, inserted) => {
-      if (err) console.log(err);
-      else {
-        DatabaseUtil.writeIdentifiers(inserted.ops, {
-          filename: collection
-        })
-          .then(data => {
-            DatabaseUtil.upLog(err, inserted, next);
-          })
-          .catch(err => console.log(err));
-      }
-    });
+    DatabaseHelper.insert({
+      database: db,
+      collection: collection,
+      docs: roles
+    })
+      .then(data => next())
+      .catch(err => console.log(err));
   },
 
   down(db, next) {
-    DatabaseUtil.identifiersFromJsonFile(collection).then(ids => {
-      db.collection(collection).remove(
-        { _id: { $in: ids } },
-        (err, removed) => {
-          DatabaseUtil.downLog(err, removed, next);
-        }
-      );
-    });
-    next();
+    DatabaseHelper.remove({ database: db, collection: collection })
+      .then(data => next())
+      .catch(err => console.log(err));
   }
 };

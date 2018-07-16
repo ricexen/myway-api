@@ -1,40 +1,30 @@
 "use strict";
 const PathHelper = require("../helpers/PathsHelper");
-const DataBase = require("../helpers/DatabaseUtil");
+const DatabaseHelper = require("../helpers/DatabaseHelper");
 const ObjectId = require("mongodb").ObjectID;
 
+const collection = "paths";
 const tracksDir = __dirname + "/../database/collections/tracks/";
 
 module.exports = {
   up(db, next) {
     PathHelper.parseGpxsFromDir(tracksDir)
       .then(paths => {
-        DataBase.insert(db, next, paths);
+        DatabaseHelper.insert({
+          database: db,
+          next: next,
+          collection: collection,
+          docs: paths
+        })
+          .then(data => next())
+          .catch(err => console.log(err));
       })
       .catch(err => console.log(err));
   },
 
   down(db, next) {
-    var ids = require("../database/.temp/paths.json");
-    db.collection("paths").remove(
-      { _id: { $in: ids.map(id => ObjectId(id)) } },
-      (err, commandResult) => {
-        if (err) console.log(err);
-        else {
-          console.log(commandResult.result, "Done");
-          next();
-        }
-      }
-    );
+    DatabaseHelper.remove({ database: db, collection: collection })
+      .then(data => next())
+      .catch(err => console.log(err));
   }
-};
-
-var insertPaths = (db, next, paths) => {
-  db.collection("paths").insert(paths, (err, inserted) => {
-    if (err) console.log(err);
-    else
-      DataBase.Identifi(inserted.ops)
-        .then(next())
-        .catch(err => console.log(err));
-  });
 };
