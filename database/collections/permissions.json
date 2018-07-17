@@ -1,0 +1,35 @@
+[
+  { "key": "create-users", "name": "Create Users" },
+  { "key": "read-users", "name": "Read Users" },
+  { "key": "update-users", "name": "Update Users" },
+  { "key": "delete-users", "name": "Delete Users" },
+  { "key": "create-profile", "name": "Create profile" },
+  { "key": "update-profile", "name": "Update profile" },
+  { "key": "read-own-profile", "name": "Read Profile" },
+  { "key": "read-user-profile", "name": "Read Profiles" },
+
+  { "key": "create-roles", "name": "Create Roles" },
+  { "key": "read-roles", "name": "Read Roles" },
+  { "key": "update-roles", "name": "Update Roles" },
+  { "key": "delete-roles", "name": "Delete Roles" },
+
+  { "key": "create-permissions", "name": "Create Permissions" },
+  { "key": "read-permissions", "name": "Read Permissions" },
+  { "key": "update-permissions", "name": "Update Permissions" },
+  { "key": "delete-permissions", "name": "Delete Permissions" },
+
+  { "key": "create-rolepermissions", "name": "Create Role Permissions" },
+  { "key": "read-rolepermissions", "name": "Read Role Permissions" },
+  { "key": "update-rolepermissions", "name": "Update Role Permissions" },
+  { "key": "delete-rolepermissions", "name": "Delete Role Permissions" },
+
+  { "key": "create-paths", "name": "Create Paths" },
+  { "key": "read-paths", "name": "Read Paths" },
+  { "key": "update-paths", "name": "Update Paths" },
+  { "key": "delete-paths", "name": "Delete Paths" },
+
+  { "key": "create-transports", "name": "Create Transports" },
+  { "key": "read-transports", "name": "Read Transports" },
+  { "key": "update-transports", "name": "Update Transports" },
+  { "key": "delete-transports", "name": "Delete Transports" }
+]

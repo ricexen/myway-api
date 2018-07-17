@@ -1,0 +1,5 @@
+[
+  { "key": "admin", "name": "Administrator" },
+  { "key": "user", "name": "User" },
+  { "key": "publisher", "name": "Publisher" }
+]
