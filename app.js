@@ -9,6 +9,8 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const keys = require("./config/keys");
 
+const cors = require('cors');
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiUserRoutes = require("./routes/UserRoutes");
@@ -18,6 +20,8 @@ var app = express();
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
+
 
 // DB CONF
 const db = require("./config/keys").mongoURI;
@@ -60,6 +64,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/users", apiUserRoutes);
 app.use("/api/paths", apiPathsRoutes);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
