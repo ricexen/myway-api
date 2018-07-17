@@ -1,0 +1,53 @@
+[
+  {
+    "role": "user",
+    "permissions": [
+      "create-profile",
+      "update-profile",
+      "read-own-profile",
+      "read-user-profile"
+    ]
+  },
+  {
+    "role": "publisher",
+    "permissions": [
+      "create-profile",
+      "update-profile",
+      "read-own-profile",
+      "read-user-profile",
+      "create-paths",
+      "read-paths",
+      "update-paths",
+      "delete-paths"
+    ]
+  },
+  {
+    "role": "admin",
+    "permissions": [
+      "create-users",
+      "read-users",
+      "update-users",
+      "delete-users",
+      "create-profile",
+      "update-profile",
+      "read-own-profile",
+      "read-user-profile",
+      "create-roles",
+      "read-roles",
+      "update-roles",
+      "delete-roles",
+      "create-permissions",
+      "read-permissions",
+      "update-permissions",
+      "delete-permissions",
+      "create-rolePermissions",
+      "read-rolePermissions",
+      "update-rolePermissions",
+      "delete-rolePermissions",
+      "create-paths",
+      "read-paths",
+      "update-paths",
+      "delete-paths"
+    ]
+  }
+]

@@ -1,0 +1,40 @@
+[
+  {
+    "_id": "calfia-cream",
+    "commonName": "Calafia blanca",
+    "family": "Calfia",
+    "paths": [
+      { "name": "calafia blanca Macro - Barretal", "price": "normal-14.5" }
+    ]
+  },
+  {
+    "_id": "calfia-red",
+    "commonName": "Calafia Roja",
+    "family": "Calfia"
+  },
+  {
+    "_id": "calfia-green",
+    "commonName": "Calafia verde",
+    "family": "Calfia"
+  },
+  {
+    "_id": "bus-cream",
+    "commonName": "Camion guinda",
+    "family": "Ultima"
+  },
+  {
+    "_id": "bus-cherry",
+    "commonName": "Camion guinda",
+    "family": "Ultima"
+  },
+  {
+    "_id": "bus-green",
+    "commonName": "Camion verde",
+    "family": "Ultima"
+  },
+  {
+    "_id": "bus-blue-and-white",
+    "commonName": "Camion blanco con azul",
+    "family": "Ultima"
+  }
+]
