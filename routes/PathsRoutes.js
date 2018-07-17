@@ -7,4 +7,5 @@ var PathsController = require("../controllers/PathsController");
  */
 router.get("/list", PathsController.paths);
 router.get("/:pathId/prices", PathsController.prices);
+router.get('/:pathId/transport', PathsController.transport);
 module.exports = router;

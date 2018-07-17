@@ -1,7 +1,8 @@
 const fs = require("fs");
 const ospath = require("path");
 const xmlParser = new require("xml2js").Parser();
-module.exports = {
+
+var Util = {
   File: {
     xmlToJson(file) {
       return new Promise((resolve, reject) => {
@@ -104,3 +105,4 @@ module.exports = {
     }
   }
 };
+module.exports = Util;

@@ -7,6 +7,7 @@ var sassMiddleware = require("node-sass-middleware");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+const cors = require("cors");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -17,6 +18,7 @@ var app = express();
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
 // DB CONF
 const db = require("./config/keys").mongoURI;
@@ -54,7 +56,6 @@ app.use(express.static(path.join(__dirname, "node_modules/jquery/dist")));
 app.use(express.static(path.join(__dirname, "node_modules/axios/dist")));
 
 // ROUTES
-
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/users", apiUserRoutes);
