@@ -1,7 +1,6 @@
 "use strict";
 const PathHelper = require("../helpers/PathsHelper");
 const DatabaseHelper = require("../helpers/DatabaseHelper");
-const ObjectId = require("mongodb").ObjectID;
 
 const collection = "paths";
 const tracksDir = __dirname + "/../database/collections/tracks/";
