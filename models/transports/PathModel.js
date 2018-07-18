@@ -5,7 +5,7 @@ var GeoPoint = require("./GeoPointSchema");
 var PathSchema = new Schema({
   name: { type: String, required: true },
   line: [GeoPoint],
-  prices: [{ type: Schema.Types.ObjectId, ref: "Price" }],
+  prices: [{ type: String, ref: "Price" }],
   keypoints: [{ type: Schema.Types.ObjectId, ref: "KeyPoint" }],
   color: { type: String, min: 3, max: 6, required: false },
   createdAt: { type: Date, default: Date.now },
