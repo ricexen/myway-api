@@ -9,6 +9,8 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 
+const cors = require('cors');
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiUserRoutes = require("./routes/UserRoutes");
@@ -60,6 +62,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/users", apiUserRoutes);
 app.use("/api/paths", apiPathsRoutes);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

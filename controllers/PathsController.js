@@ -12,7 +12,7 @@ module.exports = {
     Path.findById(req.params.pathId).exec((err, path) => {
       if (err) res.status(404).send("Path not found");
       else {
-        Prices.find({ _id: { $in: path.prices.map(price => price._id) } }).exec(
+        Price.find({ _id: { $in: path.prices.map(price => price._id) } }).exec(
           (err, prices) => {
             if (err) res.status(204).send("No Prices found");
             else res.status(200).send(prices);
