@@ -1,5 +1,6 @@
 const Path = require("../models/transports/PathModel.js");
 const Transport = require("../models/transports/TransportModel.js");
+const Price = require("../models/transports/PriceModel.js");
 module.exports = {
   paths(req, res) {
     Path.find().exec((err, paths) => {
@@ -10,7 +11,14 @@ module.exports = {
   prices(req, res) {
     Path.findById(req.params.pathId).exec((err, path) => {
       if (err) res.status(404).send("Path not found");
-      else res.send(path.prices);
+      else {
+        Prices.find({ _id: { $in: path.prices.map(price => price._id) } }).exec(
+          (err, prices) => {
+            if (err) res.status(204).send("No Prices found");
+            else res.status(200).send(prices);
+          }
+        );
+      }
     });
   },
   transport(req, res) {
