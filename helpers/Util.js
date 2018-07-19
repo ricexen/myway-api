@@ -51,9 +51,22 @@ var Util = {
     },
     delete(filename) {
       return new Promise((resolve, reject) => {
-        fs.unlink(filename, err => {
-          if (err) reject(err);
-          else resolve(filename);
+        fs.exists(filename, exists => {
+          if (!exists) reject(new Error("File [" + filename + "] not exits"));
+          else
+            fs.unlink(filename, err => {
+              if (err) reject(err);
+              else resolve(filename);
+            });
+        });
+      });
+    },
+    exists(filename) {
+      return new Promise((resolve, reject) => {
+        fs.exists(filename, exists => {
+          if (typeof exists !== "boolean")
+            reject(new Error("Return is not a boolean"));
+          resolve(exists);
         });
       });
     }

@@ -32,9 +32,11 @@ DatabaseHelper.Identifiers = {
       }
     });
   },
-  delete(collection) {
+  delete(options = { collection: null, filename: null }) {
     return new Promise((resolve, reject) => {
-      File.delete(tempDirectory + collection + ".json")
+      var filename = options.filename || options.collection;
+      filename = tempDirectory + filename + ".json";
+      File.delete(filename)
         .then(deleted => {
           resolve(deleted);
         })
@@ -63,15 +65,18 @@ DatabaseHelper.Log = {
     else console.log("Docs inserted: ", inserted.result.n);
   }
 };
+
 DatabaseHelper.Map = {
   id: id => ObjectId(id)
 };
+
 DatabaseHelper.insert = (
   options = {
     database: null,
     collection: null,
     docs: [],
-    log: true
+    log: true,
+    filename: null
   }
 ) => {
   var database = options.database,
@@ -82,7 +87,9 @@ DatabaseHelper.insert = (
     database.collection(collection).insert(docs, (err, inserted) => {
       if (err) reject(err);
       else
-        DatabaseHelper.Identifiers.write(inserted.ops)
+        DatabaseHelper.Identifiers.write(inserted.ops, {
+          filename: options.filename || null
+        })
           .then(data => {
             if (log) DatabaseHelper.Log.up(inserted);
             resolve(data);
@@ -91,29 +98,39 @@ DatabaseHelper.insert = (
     });
   });
 };
+
 DatabaseHelper.remove = (
   options = {
     database: null,
     collection: null,
     query: null,
-    log: true
+    log: true,
+    filename: null
   }
 ) => {
-  const defaultQuery = {
-    _id: { $in: require(tempDirectory + options.collection + ".json") }
-  };
+  const jsonFilename =
+    tempDirectory + (options.filename || options.collection) + ".json";
+  const arrayOfIds = require(jsonFilename).map(id => ObjectId(id));
+  const defaultQuery = { _id: { $in: arrayOfIds } };
+
   var db = options.database,
     collection = options.collection,
     query = options.query || defaultQuery,
     log = options.log;
-
-  console.log(query);
-
   return new Promise((resolve, reject) => {
     db.collection(collection).remove(query, (err, removed) => {
       if (err) reject(err);
-      else
-        DatabaseHelper.Identifiers.delete(collection)
+      else if (removed.result.n == 0) {
+        reject({
+          info: new Error("Nothing removed"),
+          query: query,
+          ids: query._id["$in"]
+        });
+      } else
+        DatabaseHelper.Identifiers.delete({
+          collection: collection,
+          filename: options.filename
+        })
           .then(data => {
             if (log) DatabaseHelper.Log.down(removed);
             resolve(data);
