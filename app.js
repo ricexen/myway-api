@@ -13,6 +13,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiUserRoutes = require("./routes/UserRoutes");
 var apiPathsRoutes = require("./routes/PathsRoutes");
+var apiTransportsRoutes = require("./routes/TransportsRoutes");
 
 var app = express();
 // Body parser middleware
@@ -60,6 +61,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/users", apiUserRoutes);
 app.use("/api/paths", apiPathsRoutes);
+app.use("/api/transports", apiTransportsRoutes);
 
 
 // catch 404 and forward to error handler
