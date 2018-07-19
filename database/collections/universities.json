@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Universidad Tecnológica de Tijuana",
+    "lat": 32.46089,
+    "lon": -116.824256,
+    "tags": [
+      "university",
+      "school",
+      "technology",
+      "universidad",
+      "escuela",
+      "tecnológia"
+    ]
+  },
+  {
+    "name": "Instituto Tecnológico de Tijuana",
+    "lat": 32.529923,
+    "lon": -116.9871,
+    "tags": [
+      "university",
+      "school",
+      "technology",
+      "universidad",
+      "escuela",
+      "tecnológia"
+    ]
+  },
+  {
+    "name": "Cetys Tijuana",
+    "lat": 32.505985,
+    "lon": -116.924159,
+    "tags": [
+      "university",
+      "school",
+      "technology",
+      "universidad",
+      "escuela",
+      "tecnológia"
+    ]
+  }
+]
