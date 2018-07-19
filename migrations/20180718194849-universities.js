@@ -1,6 +1,7 @@
 "use strict";
 const DatabaseUtil = require("../helpers/DatabaseHelper");
 const KeyPoint = require("../models/transports/KeyPointModel");
+const Tag = require("../models/labels/TagModel");
 
 const collection = "keypoints";
 var universities = require("../database/collections/universities.json");
@@ -13,7 +14,8 @@ module.exports = {
         location: {
           lat: university.lat,
           lon: university.lon
-        }
+        },
+        tags: university.tags.map(tag => new Tag({ _id: tag }))
       };
       return new KeyPoint(data);
     });

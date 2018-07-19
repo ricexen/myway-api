@@ -6,7 +6,7 @@ var PathSchema = new Schema({
   name: { type: String, required: true },
   line: [GeoPoint],
   prices: [{ type: String, ref: "Price" }],
-  keypoints: [{ type: Schema.Types.ObjectId, ref: "KeyPoint" }],
+  keypoints: [{ type: Schema.ObjectId, ref: "KeyPoint" }],
   color: { type: String, min: 3, max: 6, required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
