@@ -58,8 +58,8 @@ app.use(express.static(path.join(__dirname, "node_modules/axios/dist")));
 // ROUTES
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/api/users", apiUserRoutes);
-app.use("/api/paths", apiPathsRoutes);
+app.use("/api/user", apiUserRoutes);
+app.use("/api/path", apiPathsRoutes);
 
 
 // catch 404 and forward to error handler

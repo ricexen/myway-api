@@ -1,7 +1,11 @@
+const Validation = require("../helpers/Util").Validation;
 const Path = require("../models/transports/PathModel.js");
+const KeyPoint = require("../models/transports/KeyPointModel.js");
 const Transport = require("../models/transports/TransportModel.js");
 const Price = require("../models/transports/PriceModel.js");
+const DatabaseHelper = require("../helpers/DatabaseHelper");
 const basePath = require("./basePath.json");
+
 module.exports = {
   paths(req, res) {
     Path.find().exec((err, paths) => {
@@ -46,5 +50,30 @@ module.exports = {
       if (err) res.status(500).send(err);
       res.send(pathArr);
     });
+  },
+  universities(req, res) {
+    KeyPoint.find({ tags: "university" })
+      .catch(err => res.status(500).send(err))
+      .then(keypoints => {
+        if (keypoints.length == 0)
+          res.status(404).send({ result: { message: "No keypoints found" } });
+        else {
+          var keypointIds = keypoints.map(keypoint => String(keypoint._id));
+          Path.find()
+            .then(docs => {
+              var paths = [];
+              for (var i = 0; i < docs.length; i++) {
+                const doc = docs[i];
+                for (var j = 0; j < keypointIds.length; j++) {
+                  const id = keypointIds[j];
+                  if (doc.keypoints.map(kp => String(kp)).includes(id))
+                    paths.push(doc);
+                }
+              }
+              res.status(200).send(paths);
+            })
+            .catch(err => res.status(500).send(err));
+        }
+      });
   }
 };

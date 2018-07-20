@@ -113,6 +113,13 @@ var Util = {
     isLastIndex(index, array = []) {
       return index == array.length - 1;
     },
+    isEmpty(obj) {
+      var empty = true;
+      for (var key in obj) {
+        if (empty && obj.hasOwnProperty(key)) empty = false;
+      }
+      return empty;
+    },
     areSameLenght(object1, object2) {
       return object1.length == object2.length;
     }
