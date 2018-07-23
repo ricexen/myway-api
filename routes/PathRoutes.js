@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var PathsController = require("../controllers/PathsController");
+var PathsController = require("../controllers/PathController");
 
 /**
  * GET Paths
