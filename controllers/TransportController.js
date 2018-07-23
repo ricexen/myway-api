@@ -10,7 +10,7 @@ module.exports = {
         else res.status(200).send(transports);
       });
   },
-  transport(res, req) {
+  transport(req, res) {
     Transport.findById(req.params.id)
       .catch(err => res.status(500).send(err))
       .then(transport => res.status(200).send(transport));
