@@ -12,8 +12,8 @@ const cors = require("cors");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiUserRoutes = require("./routes/UserRoutes");
-var apiPathsRoutes = require("./routes/PathsRoutes");
-var apiTransportsRoutes = require("./routes/TransportsRoutes");
+var apiPathRoutes = require("./routes/PathRoutes");
+var apiTransportRoutes = require("./routes/TransportRoutes");
 
 var app = express();
 // Body parser middleware
@@ -59,9 +59,9 @@ app.use(express.static(path.join(__dirname, "node_modules/axios/dist")));
 // ROUTES
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/api/users", apiUserRoutes);
-app.use("/api/paths", apiPathsRoutes);
-app.use("/api/transports", apiTransportsRoutes);
+app.use("/api/user", apiUserRoutes);
+app.use("/api/path", apiPathRoutes);
+app.use("/api/transport", apiTransportRoutes);
 
 
 // catch 404 and forward to error handler
