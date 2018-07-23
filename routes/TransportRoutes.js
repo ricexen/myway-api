@@ -5,7 +5,7 @@ var TransportsController = require("../controllers/TransportController");
 /**
  * GET Transports
  */
-router.get("/list", TransportsController.list);
 router.get('/:id', TransportsController.transport);
+router.get("/list", TransportsController.list);
 
 module.exports = router;
