@@ -10,7 +10,8 @@
       "universidad",
       "escuela",
       "tecnológia"
-    ]
+    ],
+    "image": "http://biblioteca.uttijuana.edu.mx/altair/cnf/xyz1/UTT2015.JPG"
   },
   {
     "name": "Instituto Tecnológico de Tijuana",
@@ -23,7 +24,8 @@
       "universidad",
       "escuela",
       "tecnológia"
-    ]
+    ],
+    "image": "https://upload.wikimedia.org/wikipedia/commons/2/2e/ITT.jpg"
   },
   {
     "name": "Cetys Tijuana",
@@ -36,6 +38,7 @@
       "universidad",
       "escuela",
       "tecnológia"
-    ]
+    ],
+    "image": "http://www.cetys.mx/en/wp-content/uploads/2016/11/logo-cetys.png"
   }
 ]
