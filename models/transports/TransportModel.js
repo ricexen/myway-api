@@ -8,4 +8,4 @@ var TransportSchema = new Schema({
   paths: [{ type: Schema.Types.ObjectId, ref: "Path" }]
 });
 
-module.exports = mongoose.model("transport", TransportSchema);
+module.exports = mongoose.model("Transport", TransportSchema);

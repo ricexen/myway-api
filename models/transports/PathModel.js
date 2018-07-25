@@ -12,4 +12,4 @@ var PathSchema = new Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model("path", PathSchema);
+module.exports = mongoose.model("Path", PathSchema);
