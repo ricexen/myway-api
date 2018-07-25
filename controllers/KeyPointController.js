@@ -7,19 +7,12 @@ var KeyPointController = {};
  * @param {Array} keypoints
  */
 KeyPointController.mapByTags = (tags, keypoints) => {
-  for (var kp = 0; kp < keypoints.length; kp++) {
+  for (var kp = keypoints.length - 1; kp >= 0; kp--) {
     const keypoint = keypoints[kp];
-    for (var t = 0; t < tags; t++) {
-      const tag = tags[i];
-      for (var kpt = 0; kpt < keypoint.tags.length; kpt++) {
-        const keypointTag = keypoint.tags[kpt];
-        if (keypointTag != tag) {
-          console.log("hola");
-          keypoints.pop(keypoint);
-          kp--;
-        }
-      }
-    }
+    var includes = false;
+    for (var i = 0; i < tags.length; i++)
+      if (!includes && keypoint.tags.includes(String(tags[i]))) includes = true;
+    if (!includes) keypoints.splice(kp, 1);
   }
   return keypoints;
 };
@@ -27,6 +20,7 @@ KeyPointController.mapByTags = (tags, keypoints) => {
 module.exports = {
   list(req, res) {
     KeyPoint.find()
+      .sort({ name: 1 })
       .catch(err => res.status(500).send(err))
       .then(keypoints => {
         if (keypoints.length === 0)
