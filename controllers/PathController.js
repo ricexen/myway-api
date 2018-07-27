@@ -1,16 +1,14 @@
-const Validation = require("../helpers/Util").Validation;
 const Path = require("../models/transports/PathModel.js");
 const KeyPoint = require("../models/transports/KeyPointModel.js");
 const Transport = require("../models/transports/TransportModel.js");
 const Price = require("../models/transports/PriceModel.js");
-const DatabaseHelper = require("../helpers/DatabaseHelper");
 const basePath = require("./basePath.json");
 
 module.exports = {
   paths(req, res) {
     Path.find().exec((err, paths) => {
       if (err) res.status(500).send(err);
-      res.send(paths);
+      res.status(200).send(paths);
     });
   },
   prices(req, res) {
@@ -43,6 +41,7 @@ module.exports = {
           coords.push([path.line[j].lon, path.line[j].lat]);
         }
         var geojson = JSON.parse(JSON.stringify(basePath));
+        geojson.features[0].properties.name = path.name;
         geojson.features[0].geometry.coordinates = coords;
 
         pathArr.push(geojson);
@@ -75,5 +74,8 @@ module.exports = {
             .catch(err => res.status(500).send(err));
         }
       });
+  },
+  university(req, res) {
+    KeyPoint.find({name: req.params.name}).catch(err => res.status(500).send(err))
   }
 };
