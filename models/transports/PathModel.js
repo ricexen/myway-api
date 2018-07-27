@@ -23,4 +23,4 @@ PathSchema.virtual('geojson').get(function () {
   return geojson;
 });
 
-module.exports = mongoose.model("path", PathSchema);
+module.exports = mongoose.model("Path", PathSchema);

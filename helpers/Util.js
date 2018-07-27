@@ -64,6 +64,13 @@ var Util = {
     }
   },
   Validation: {
+    isEmpty(obj) {
+      var empty = true;
+      for (var key in obj) {
+        if (empty && obj.hasOwnProperty(key)) empty = false;
+      }
+      return empty;
+    },
     isArray(value) {
       return value && typeof value === "object" && value.constructor === Array;
     },
@@ -103,6 +110,7 @@ var Util = {
     areSameLenght(object1, object2) {
       return object1.length == object2.length;
     }
+   
   }
 };
 module.exports = Util;
