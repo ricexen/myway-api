@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-require('dotenv');
+require('dotenv').config();
 var app = require("../app");
 var debug = require("debug")("myway-api:server");
 var http = require("http");

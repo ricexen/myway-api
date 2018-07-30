@@ -1,6 +1,9 @@
 const File = require("./Util").File;
 const Validation = require("./Util").Validation;
 const Path = require("../models/transports/PathModel");
+const Price = require("../models/transports/PriceModel");
+
+const prices = require("../database/collections/prices.json");
 
 var PathHelper = {
   parseGpxsFromDir: dir => {
@@ -28,7 +31,8 @@ var PathHelper = {
             name: json.gpx.trk[0].name,
             line: json.gpx.trk[0].trkseg[0].trkpt.map(
               trackPoint => trackPoint["$"]
-            )
+            ),
+            prices: prices.map(price => new Price(price))
           });
           resolve(path);
         })
