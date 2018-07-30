@@ -9,8 +9,6 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 
-const cors = require('cors');
-
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiUserRoutes = require("./routes/UserRoutes");

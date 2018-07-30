@@ -1,5 +1,6 @@
 const Path = require('../models/transports/PathModel.js');
 const Transport = require('../models/transports/TransportModel.js');
+
 module.exports = {
 	paths(req, res) {
 		Path.find().exec((err, paths) => {
@@ -14,9 +15,11 @@ module.exports = {
 			for (let index = 0; index < paths.length; index++) {
 				const path = paths[index];
 				var coords = [];
+
 				for (var j = 0; j < path.line.length; j++) {
-					coords.push([ path.line[j].lon, path.line[j].lat ]);
+					coords.push([ path.line[j].lon, path.line[j].lat]);
 				}
+
 				var geojson = {
 					type: 'FeatureCollection',
 					features: [
@@ -25,7 +28,7 @@ module.exports = {
 							properties: {
 								name: 'NOMBRE',
 								desc: 'Length: 8.63 km (5.362 mi)',
-								color: 'white'
+								color: ""
 							},
 							geometry: {
 								type: 'LineString',
@@ -35,7 +38,8 @@ module.exports = {
 					]
 				};
 				geojson.features[0].geometry.coordinates = coords;
-
+				geojson.features[0].properties.color = '#' + path.color;
+				geojson.features[0].properties.name = path.name;
 				pathArr.push(geojson);
 			}
 			if (err) res.status(500).send(err);
