@@ -11,6 +11,7 @@ module.exports = {
       res.status(200).send(paths);
     });
   },
+
   prices(req, res) {
     Path.findById(req.params.pathId).exec((err, path) => {
       if (err) res.status(404).send("Path not found");
@@ -22,6 +23,7 @@ module.exports = {
       }
     });
   },
+
   transport(req, res) {
     Transport.find({ paths: req.params.pathId }, (err, transports) => {
       if (err) res.status(500).send(err);
@@ -50,6 +52,7 @@ module.exports = {
       res.send(pathArr);
     });
   },
+
   universities(req, res) {
     KeyPoint.find({ tags: "university" })
       .catch(err => res.status(500).send(err))
@@ -75,7 +78,10 @@ module.exports = {
         }
       });
   },
+
   university(req, res) {
-    KeyPoint.find({name: req.params.name}).catch(err => res.status(500).send(err))
+    KeyPoint.find({ name: req.params.name }).catch(err =>
+      res.status(500).send(err)
+    );
   }
 };
