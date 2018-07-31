@@ -1,8 +1,11 @@
-const Path = require("../models/transports/PathModel.js");
-const KeyPoint = require("../models/transports/KeyPointModel.js");
-const Transport = require("../models/transports/TransportModel.js");
-const Price = require("../models/transports/PriceModel.js");
-const basePath = require("./basePath.json");
+const isEmpty = require('./validation/is-empty');
+
+const Validation = require('../helpers/Util').Validation;
+const Path = require('../models/transports/PathModel.js');
+const KeyPoint = require('../models/transports/KeyPointModel.js');
+const Transport = require('../models/transports/TransportModel.js');
+const Price = require('../models/transports/PriceModel.js');
+const basePath = require('./basePath.js');
 
 module.exports = {
   paths(req, res) {
@@ -14,10 +17,10 @@ module.exports = {
 
   prices(req, res) {
     Path.findById(req.params.pathId).exec((err, path) => {
-      if (err) res.status(404).send("Path not found");
+      if (err) res.status(404).send('Path not found');
       else {
         Price.find({ _id: { $in: path.prices } }).exec((err, prices) => {
-          if (err) res.status(204).send("No Prices found");
+          if (err) res.status(204).send('No Prices found');
           else res.status(200).send(prices);
         });
       }
@@ -28,7 +31,7 @@ module.exports = {
     Transport.find({ paths: req.params.pathId }, (err, transports) => {
       if (err) res.status(500).send(err);
       else if (!transports)
-        res.status(500).send({ message: "No transport found" });
+        res.status(500).send({ message: 'No transport found' });
       else res.status(200).send(transports[0]);
     });
   },
@@ -54,11 +57,11 @@ module.exports = {
   },
 
   universities(req, res) {
-    KeyPoint.find({ tags: "university" })
+    KeyPoint.find({ tags: 'university' })
       .catch(err => res.status(500).send(err))
       .then(keypoints => {
         if (keypoints.length == 0)
-          res.status(404).send({ result: { message: "No keypoints found" } });
+          res.status(404).send({ result: { message: 'No keypoints found' } });
         else {
           var keypointIds = keypoints.map(keypoint => String(keypoint._id));
           Path.find()
@@ -73,6 +76,44 @@ module.exports = {
                 }
               }
               res.status(200).send(paths);
+            })
+            .catch(err => res.status(500).send(err));
+        }
+      });
+  },
+  userUniversityPaths(req, res) {
+    const userUniversity = req.user.university;
+    KeyPoint.findOne({ name: userUniversity }, '_id name')
+      .catch(err => res.status(500).send(err))
+      .then(university => {
+        if (isEmpty(university))
+          res
+            .status(404)
+            .send({ result: { message: 'User University not found' } });
+        else {
+          const universityId = university._id;
+
+          Path.find()
+            .then(paths => {
+              if (isEmpty(paths)) {
+                res.status(404).send({ result: { message: 'No paths found' } });
+              } else {
+                var universityPaths = [];
+                for (let i = 0; i < paths.length; i++) {
+                  const path = paths[i];
+                  const keypoints = path.keypoints;
+                  if (!isEmpty(keypoints)) {
+                    for (let j = 0; j < keypoints.length; j++) {
+                      const keypoint = keypoints[j];
+                      if (keypoint.equals(universityId)) {
+                        universityPaths.push(path);
+                        break;
+                      }
+                    }
+                  }
+                }
+                res.status(200).send(universityPaths);
+              }
             })
             .catch(err => res.status(500).send(err));
         }

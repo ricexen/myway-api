@@ -64,3 +64,4 @@ typings/
 yarn.lock
 package-lock.json
 .vscode
+.vs/slnx.sqlite
