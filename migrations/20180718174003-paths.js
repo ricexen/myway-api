@@ -7,7 +7,7 @@ const tracksDir = __dirname + "/../database/collections/tracks/";
 
 module.exports = {
   up(db, next) {
-    PathHelper.parseGpxsFromDir(tracksDir)
+    PathHelper.Parse.Directory.gpx(tracksDir)
       .then(paths => {
         DatabaseHelper.insert({
           database: db,

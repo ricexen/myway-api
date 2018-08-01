@@ -1,4 +1,5 @@
-var User = require("../models/users/UserModel.js");
+const User = require("../models/users/UserModel.js");
+const PathHelper = require("../helpers/PathsHelper.js");
 const validateRegisterInput = require("./validation/register");
 const validateLoginInput = require("./validation/login");
 const gravatar = require("gravatar");
@@ -99,6 +100,19 @@ module.exports = {
         }
       });
     });
+  },
+
+  universityPaths(req, res) {
+    if (!req.user.university) {
+      return res.status(404).send({ message: "Universidad no asignada" });
+    } else {
+      PathHelper.Find.PathsUniversity(req.user.university)
+        .catch(err => {
+          return res.status(500).send(err);
+        })
+        .then(paths => {
+          return res.send(paths);
+        });
+    }
   }
-  
 };
