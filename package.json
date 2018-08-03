@@ -7,6 +7,10 @@
     "migrate": "node ./migrations/index.js"
   },
   "dependencies": {
+    "@mapbox/mapbox-sdk": "^0.4.0",
+    "@turf/distance": "^6.0.1",
+    "@turf/helpers": "^6.1.4",
+    "@turf/nearest-point-on-line": "^6.0.2",
     "animate.sass": "^1.0.1",
     "axios": "^0.18.0",
     "bcrypt": "^2.0.1",
