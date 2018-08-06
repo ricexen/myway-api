@@ -107,11 +107,18 @@ module.exports = {
       return res.status(404).send({ message: "Universidad no asignada" });
     } else {
       PathHelper.Find.PathsUniversity(req.user.university)
-        .catch(err => {
-          return res.status(500).send(err);
-        })
         .then(paths => {
-          return res.send(paths);
+          if (paths.length == 0)
+            res.status(202).send({
+              message: "No se encontraron paths para tu universidad"
+            });
+          else res.status(200).send(paths);
+        })
+        .catch(error => {
+          return res.status(500).send({
+            message: "Error en el servidor",
+            error
+          });
         });
     }
   }
