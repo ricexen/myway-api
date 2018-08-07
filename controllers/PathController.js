@@ -1,5 +1,6 @@
 const isEmpty = require("./validation/is-empty");
 
+const basePath = require('../models/transports/basePath');
 const Path = require("../models/transports/PathModel.js");
 const KeyPoint = require("../models/transports/KeyPointModel.js");
 const Transport = require("../models/transports/TransportModel.js");
@@ -112,42 +113,75 @@ module.exports = {
     );
   },
   estimatedTranportArrival(req, res) {
-    Path.findById(req.pathId).exec((err, path) => {
+    Path.findById(req.body.pathId).exec((err, path) => {
       if(err){ 
         res.status(404).send("Path not found");
       }
       else{
-        
-      }
-    });
-    directionsClient.getDirections({
-      waypoints: [
-        {
-          coordinates: [-117.12008, 32.527522]
-        },
-        {
-          coordinates: [-117.040174, 32.534628]
+        let shortestDistance = 0;
+        let shortestPoint = [];
+        let points = [];
+
+        for(let x = 0; x < path.line.length; x++){
+          const point = [ path.line[x].lon, path.line[x].lat ];
+          points.push(point);
         }
-      ],
-      geometries: 'geojson',
-      profile: 'driving',
-      overview: 'full'
-    })
-    .send()
-    .then(response => {
-      const route = response.body;
-      res.status(200).send(route);
-    })
-    .catch(error => {
-      res.status(500).send(error);
-    })
+
+        console.log(req.body.userLocation);
+        let from = [];
+        let to = req.body.userLocation;
+
+        for (let i = 0; i < points.length; i++) {
+          from = points[i];
+          const tempDist = distance(from, to);
+          if(i == 0) shortestDistance = tempDist;
+          if(tempDist <= shortestDistance){
+            shortestDistance = tempDist;
+            shortestPoint = points[i];
+          }
+        }
+        const index = points.findIndex(p => p==shortestPoint);
+
+        const userRoute = points.slice(0, index + 1);
+        console.log(userRoute.length + " : " + points.length)
+        let directionsArray = [];
+        directionsArray = [
+          {
+            coordinates: userRoute[0]
+          },
+          {
+            coordinates: userRoute[userRoute.length - 1]
+          }
+        ]
+        directionsClient.getDirections({
+          waypoints: 
+          directionsArray,
+          geometries: 'geojson',
+          profile: 'driving-traffic',
+          overview: 'full'
+        })
+        .send()
+        .then(response => {
+          const coords = response.body.routes[0].geometry.coordinates;
+          var geojson = JSON.parse(JSON.stringify(basePath));
+          geojson.features[0].properties.name = this.name;
+          geojson.features[0].geometry.coordinates = coords;
+          console.log(geojson)
+          res.status(200).send(geojson);
+        })
+        .catch(error => {
+          res.status(500).send(error);
+        })
+      }
+    });    
   },
-  shortestDistance(line, point) {
+  shortestDistance(point, line) {
     let shortestDistance = 0;
     let shortestPoint = [];
     for (let i = 0; i < line.length; i++) {
       const temp = distance(point, line[i]);
-      if(temp < shortestDistance){
+      if(i == 0) shortestDistance = temp;
+      if(temp <= shortestDistance){
         shortestDistance = temp;
         shortestPoint = line[i];
       }

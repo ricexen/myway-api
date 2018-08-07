@@ -13,5 +13,6 @@ router.get(
   PathsController.userUniversityPaths
 );
 router.get("/list/university/:name", PathsController.university);
+router.post("/estimatedtransportarrival", PathsController.estimatedTranportArrival);
 
 module.exports = router;
