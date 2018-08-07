@@ -23,13 +23,13 @@ const findUniversityKeyPoint = name => {
     findKeyPointsByTags(["university", "universidad"])
       .catch(err => reject(err))
       .then(keypoints => {
-        for(var i = 0; i < keypoints.length; i++){
-          const keypoint = keypoints[i]
-          if(String(keypoint.name) === String(name)){
-            resolve(keypoint)
+        for (var i = 0; i < keypoints.length; i++) {
+          const keypoint = keypoints[i];
+          if (String(keypoint.name) === String(name)) {
+            resolve(keypoint);
           }
         }
-        reject({message: "KeyPoint not found"})
+        reject({ message: "KeyPoint not found" });
       });
   });
 };

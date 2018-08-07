@@ -2,6 +2,7 @@ const Path = require("../models/transports/PathModel.js");
 const KeyPoint = require("../models/transports/KeyPointModel.js");
 const Transport = require("../models/transports/TransportModel.js");
 const Price = require("../models/transports/PriceModel.js");
+const PathHelper = require("../helpers/PathsHelper.js");
 
 module.exports = {
   paths(req, res) {

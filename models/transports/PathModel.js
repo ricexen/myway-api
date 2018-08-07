@@ -27,4 +27,16 @@ PathSchema.virtual("geojson").get(function() {
   return geojson;
 });
 
+PathSchema.virtual('mapMatchings').get(function(){
+  var point = {};
+  var points = [];
+  for (var i = 0; i < this.line.length; i++) {
+    const geoPoint = this.line[i];
+    point.coordinates = [geoPoint.lon, geoPoint.lat];
+    point.approach = "curb";
+    points.push(point);
+  }
+  return points;
+})
+
 module.exports = mongoose.model("Path", PathSchema);

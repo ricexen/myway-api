@@ -103,14 +103,16 @@ module.exports = {
   },
 
   universityPaths(req, res) {
+    console.log('hola')
     if (!req.user.university) {
-      return res.status(404).send({ message: "Universidad no asignada" });
+      return res.status(200).send({ message: "Universidad no asignada" });
     } else {
       PathHelper.Find.PathsUniversity(req.user.university)
         .then(paths => {
           if (paths.length == 0)
             res.status(202).send({
-              message: "No se encontraron paths para tu universidad"
+              message: "No se encontraron paths para tu universidad",
+              paths
             });
           else res.status(200).send(paths);
         })
