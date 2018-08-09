@@ -71,6 +71,10 @@ module.exports = {
         errors.email = "User not found";
         return res.status(404).json(errors);
       }
+      else {
+        console.log(userLog)
+        return res.status(200).send(userLog);
+      }
       // Check password match
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
@@ -100,5 +104,5 @@ module.exports = {
       });
     });
   }
-  
+
 };
