@@ -24,5 +24,11 @@ module.exports = {
     Transport.findById(req.params.id)
       .catch(err => res.status(500).send(err))
       .then(transport => res.status(200).send(transport));
+  },
+  //API que busca todos los registros dentro de transportes que conincidan con el parametro enviado
+  listSearch(req, res) {
+    Transport.find({commonName: {$regex: ".*" + req.params.commonName + ".*"}})
+      .catch(err => res.status(500).send(err))
+      .then(transport => res.status(200).send(transport));
   }
 };
