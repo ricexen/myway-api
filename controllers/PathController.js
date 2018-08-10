@@ -160,14 +160,25 @@ module.exports = {
           })
           .send()
           .then(response => {
-            // const coords = response.body.routes[0].geometry.coordinates;
-            // var geojson = JSON.parse(JSON.stringify(basePath));
-            // geojson.features[0].properties.name = this.name;
-            // geojson.features[0].geometry.coordinates = coords;
-            // res.status(200).send(geojson);
-            const timeInSeconds = response.body.routes[0].duration;
-            const date = new Date();
-            date.setSeconds(date.getSeconds() + timeInSeconds);
+            const travelTime = response.body.routes[0].duration;
+            let timeInSeconds = travelTime + path.currentDeparture;
+            let date = new Date();
+            const currentDate =
+              date.getHours() * 3600 +
+              date.getMinutes() * 60 +
+              date.getSeconds();
+
+            if (currentDate > timeInSeconds) {
+              while (currentDate > timeInSeconds) {
+                timeInSeconds += path.departureInterval;
+              }
+            } else {
+              while (timeInSeconds - currentDate > path.departureInterval) {
+                timeInSeconds - path.departureInterval;
+              }
+            }
+
+            date.setHours(0, 0, timeInSeconds, 0);
             res.status(200).send({ date });
           })
           .catch(error => {
