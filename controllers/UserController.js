@@ -66,16 +66,11 @@ module.exports = {
     const email = req.body.email;
     const password = req.body.password;
     User.findOne({ email }).then(userLog => {
-      // Check for user
       if (!userLog) {
         errors.email = "User not found";
         return res.status(404).json(errors);
       }
-      else {
-        console.log(userLog)
-        return res.status(200).send(userLog);
-      }
-      // Check password match
+
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
           const payload = {
@@ -104,5 +99,4 @@ module.exports = {
       });
     });
   }
-
 };
