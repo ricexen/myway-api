@@ -16,7 +16,7 @@ module.exports = {
     }
     command.catch(err => res.status(500).send(err)).then(transports => {
       if (transports.length === 0)
-        res.status(404).send({ message: "Transports not found" });
+        res.status(404).send({ message: "Transportes no encontrados" });
       else res.status(200).send(transports);
     });
   },

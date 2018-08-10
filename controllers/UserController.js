@@ -68,7 +68,7 @@ module.exports = {
     const password = req.body.password;
     User.findOne({ email }).then(userLog => {
       if (!userLog) {
-        errors.email = "User not found";
+        errors.email = "Usuario no encontrado";
         return res.status(404).json(errors);
       }
 
@@ -105,6 +105,7 @@ module.exports = {
     if (!req.user.university) {
       return res.status(404).send({ message: "Universidad no asignada" });
     } else {
+      console.log(req.user.university);
       PathHelper.Find.PathsUniversity(req.user.university)
         .then(paths => {
           if (paths.length == 0)
@@ -114,10 +115,7 @@ module.exports = {
           else res.status(200).send(paths);
         })
         .catch(error => {
-          return res.status(500).send({
-            message: "Error en el servidor",
-            error
-          });
+          return res.status(500).send(error);
         });
     }
   }

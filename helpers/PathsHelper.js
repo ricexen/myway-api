@@ -29,7 +29,7 @@ const findUniversityKeyPoint = name => {
             resolve(keypoint)
           }
         }
-        reject({message: "KeyPoint not found"})
+        reject({message: ("No se encontraron rutas para: "+name)})
       });
   });
 };
