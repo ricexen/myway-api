@@ -1,5 +1,3 @@
-const isEmpty = require("./validation/is-empty");
-
 const Path = require("../models/transports/PathModel.js");
 const KeyPoint = require("../models/transports/KeyPointModel.js");
 const Transport = require("../models/transports/TransportModel.js");
@@ -15,10 +13,10 @@ module.exports = {
 
   prices(req, res) {
     Path.findById(req.params.pathId).exec((err, path) => {
-      if (err) res.status(404).send("Path not found");
+      if (err) res.status(404).send("Ruta no encontrada");
       else {
         Price.find({ _id: { $in: path.prices } }).exec((err, prices) => {
-          if (err) res.status(204).send("No Prices found");
+          if (err) res.status(204).send("No se encontraron precios");
           else res.status(200).send(prices);
         });
       }
@@ -54,45 +52,6 @@ module.exports = {
                 }
               }
               res.status(200).send(paths);
-            })
-            .catch(err => res.status(500).send(err));
-        }
-      });
-  },
-
-  userUniversityPaths(req, res) {
-    const userUniversity = req.user.university;
-    KeyPoint.findOne({ name: userUniversity }, "_id name")
-      .catch(err => res.status(500).send(err))
-      .then(university => {
-        if (isEmpty(university))
-          res
-            .status(404)
-            .send({ result: { message: "User University not found" } });
-        else {
-          const universityId = university._id;
-
-          Path.find()
-            .then(paths => {
-              if (isEmpty(paths)) {
-                res.status(404).send({ result: { message: "No paths found" } });
-              } else {
-                var universityPaths = [];
-                for (let i = 0; i < paths.length; i++) {
-                  const path = paths[i];
-                  const keypoints = path.keypoints;
-                  if (!isEmpty(keypoints)) {
-                    for (let j = 0; j < keypoints.length; j++) {
-                      const keypoint = keypoints[j];
-                      if (keypoint.equals(universityId)) {
-                        universityPaths.push(path);
-                        break;
-                      }
-                    }
-                  }
-                }
-                res.status(200).send(universityPaths);
-              }
             })
             .catch(err => res.status(500).send(err));
         }
