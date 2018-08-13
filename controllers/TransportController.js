@@ -16,12 +16,18 @@ module.exports = {
     }
     command.catch(err => res.status(500).send(err)).then(transports => {
       if (transports.length === 0)
-        res.status(404).send({ message: "Transports not found" });
+        res.status(404).send({ message: "Transportes no encontrados" });
       else res.status(200).send(transports);
     });
   },
   transport(req, res) {
     Transport.findById(req.params.id)
+      .catch(err => res.status(500).send(err))
+      .then(transport => res.status(200).send(transport));
+  },
+  //API que busca todos los registros dentro de transportes que conincidan con el parametro enviado
+  listSearch(req, res) {
+    Transport.find({commonName: {$regex: ".*" + req.params.commonName + ".*"}})
       .catch(err => res.status(500).send(err))
       .then(transport => res.status(200).send(transport));
   }

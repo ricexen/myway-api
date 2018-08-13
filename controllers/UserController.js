@@ -1,4 +1,5 @@
-var User = require("../models/users/UserModel.js");
+const User = require("../models/users/UserModel.js");
+const PathHelper = require("../helpers/PathsHelper.js");
 const validateRegisterInput = require("./validation/register");
 const validateLoginInput = require("./validation/login");
 const gravatar = require("gravatar");
@@ -66,12 +67,11 @@ module.exports = {
     const email = req.body.email;
     const password = req.body.password;
     User.findOne({ email }).then(userLog => {
-      // Check for user
       if (!userLog) {
-        errors.email = "User not found";
+        errors.email = "Usuario no encontrado";
         return res.status(404).json(errors);
       }
-      // Check password match
+
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
           const payload = {
@@ -99,6 +99,24 @@ module.exports = {
         }
       });
     });
+  },
+
+  universityPaths(req, res) {
+    if (!req.user.university) {
+      return res.status(404).send({ message: "Universidad no asignada" });
+    } else {
+      console.log(req.user.university);
+      PathHelper.Find.PathsUniversity(req.user.university)
+        .then(paths => {
+          if (paths.length == 0)
+            res.status(202).send({
+              message: "No se encontraron paths para tu universidad"
+            });
+          else res.status(200).send(paths);
+        })
+        .catch(error => {
+          return res.status(500).send(error);
+        });
+    }
   }
-  
 };

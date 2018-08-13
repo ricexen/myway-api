@@ -24,10 +24,10 @@ module.exports = {
 
   prices(req, res) {
     Path.findById(req.params.pathId).exec((err, path) => {
-      if (err) res.status(404).send('Path not found');
+      if (err) res.status(404).send("Ruta no encontrada");
       else {
         Price.find({ _id: { $in: path.prices } }).exec((err, prices) => {
-          if (err) res.status(204).send('No Prices found');
+          if (err) res.status(204).send("No se encontraron precios");
           else res.status(200).send(prices);
         });
       }
