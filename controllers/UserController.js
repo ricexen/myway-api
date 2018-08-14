@@ -31,6 +31,7 @@ module.exports = {
           d: "mm" // Default
         });
         const newUser = new User({
+          _id: req.body._id,
           firstname: req.body.firstname,
           lastname: req.body.lastname,
           email: req.body.email,
@@ -79,7 +80,6 @@ module.exports = {
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
           const payload = {
-            id: userLog.id,
             firstname: userLog.firstname,
             lastname: userLog.lastname,
             avatar: userLog.avatar,
@@ -103,6 +103,29 @@ module.exports = {
         }
       });
     });
-  }
+  },
+
+  edit(req, res) {
+    var editUser = {
+      _id: req.body._id,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+     // email: req.body.email,
+      university: req.body.university
+    }
+    User.updateOne({"_id": req.body._id}, {$set: editUser}, function(err){
+      if(err){
+        return res.send({
+          message: "Error"
+        });
+      }else{
+        return res.send({
+          message: "Editado exitosamente"  
+        });
+        
+      }
+    })
+  },
+  
 
 };
