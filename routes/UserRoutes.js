@@ -5,11 +5,14 @@ const passport = require("passport");
 
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
+router.put("/edit", UserController.edit);
 router.get(
   "/university/paths",
   passport.authenticate("jwt", { session: false }),
   UserController.universityPaths
 );
+
+
 
 
 
