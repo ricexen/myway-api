@@ -32,6 +32,7 @@ module.exports = {
           d: "mm" // Default
         });
         const newUser = new User({
+          _id: req.body._id,
           firstname: req.body.firstname,
           lastname: req.body.lastname,
           email: req.body.email,
@@ -71,11 +72,9 @@ module.exports = {
         errors.email = "Usuario no encontrado";
         return res.status(404).json(errors);
       }
-
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
           const payload = {
-            id: userLog.id,
             firstname: userLog.firstname,
             lastname: userLog.lastname,
             avatar: userLog.avatar,
@@ -87,10 +86,9 @@ module.exports = {
             keys.secretKey,
             { expiresIn: 3600 },
             (err, token) => {
-              res.json({
-                success: "Success Login",
-                token: "Bearer " + token
-              });
+              userLog.success = "Success Login";
+              userLog.token = "Bearer " + token;
+              res.json(userLog);
             }
           );
         } else {
@@ -98,6 +96,27 @@ module.exports = {
           return res.status(404).json(errors);
         }
       });
+    });
+  },
+
+  edit(req, res) {
+    var editUser = {
+      _id: req.body._id,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      // email: req.body.email,
+      university: req.body.university
+    };
+    User.updateOne({ _id: req.body._id }, { $set: editUser }, function(err) {
+      if (err) {
+        return res.send({
+          message: "Error"
+        });
+      } else {
+        return res.send({
+          message: "Editado exitosamente"
+        });
+      }
     });
   },
 
