@@ -72,7 +72,6 @@ module.exports = {
         errors.email = "Usuario no encontrado";
         return res.status(404).json(errors);
       }
-
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
           const payload = {
@@ -87,10 +86,9 @@ module.exports = {
             keys.secretKey,
             { expiresIn: 3600 },
             (err, token) => {
-              res.json({
-                success: "Success Login",
-                token: "Bearer " + token
-              });
+              userLog.success = "Success Login";
+              userLog.token = "Bearer " + token;
+              res.json(userLog);
             }
           );
         } else {
@@ -106,24 +104,21 @@ module.exports = {
       _id: req.body._id,
       firstname: req.body.firstname,
       lastname: req.body.lastname,
-     // email: req.body.email,
+      // email: req.body.email,
       university: req.body.university
-    }
-    User.updateOne({"_id": req.body._id}, {$set: editUser}, function(err){
-      if(err){
+    };
+    User.updateOne({ _id: req.body._id }, { $set: editUser }, function(err) {
+      if (err) {
         return res.send({
           message: "Error"
         });
-      }else{
+      } else {
         return res.send({
-          message: "Editado exitosamente"  
+          message: "Editado exitosamente"
         });
-        
       }
-    })
+    });
   },
-  
-
 
   universityPaths(req, res) {
     if (!req.user.university) {
