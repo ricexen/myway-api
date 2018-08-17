@@ -72,6 +72,10 @@ module.exports = {
         errors.email = "Usuario no encontrado";
         return res.status(404).json(errors);
       }
+      else {
+        console.log(userLog)
+        return res.status(200).send(userLog);
+      }
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
           const payload = {
