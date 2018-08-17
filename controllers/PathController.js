@@ -161,6 +161,19 @@ module.exports = {
           .send()
           .then(response => {
             const travelTime = response.body.routes[0].duration;
+            const points = response.body.routes[0].geometry.coordinates.map(
+              p => {
+                let obj = {};
+                obj.lon = p[0];
+                obj.lat = p[1];
+                return obj;
+              }
+            );
+            const mapboxPath = new Path({
+              line: points,
+              name: 'le route',
+              color: '000'
+            });
             let timeInSeconds = travelTime + path.currentDeparture;
             let date = new Date();
             const currentDate =
@@ -179,7 +192,9 @@ module.exports = {
             }
 
             date.setHours(0, 0, timeInSeconds, 0);
-            res.status(200).send({ date });
+            res
+              .status(200)
+              .send({ date, shortestPoint, mapboxPath, data: response.body });
           })
           .catch(error => {
             res.status(500).send(error);
