@@ -9,25 +9,18 @@ const mapMatchingClient = mbxMapMatching({
 	accessToken: 'pk.eyJ1IjoiY2FybGFwZXJleiIsImEiOiJjamwyanc3eXMwMGFnM3dxZTdncTFobHJ0In0.3wKa1yFQJGH60nuwAzjuxQ'
 });
 const GeoPoint = require('../models/transports/GeoPointSchema');
-//var index = 0;
 
 var makePizza = function(arr) {
 	var i;
 	var pizza = [];
-	console.log('Tamano del array' + arr.length);
 	for (i = 0; i < arr.length; i += 100) {
-		// console.log("El array " + arr[0]);
 		var slice = arr.slice(i, i + 100);
-		console.log('Rebanada: ' + slice.length);
-		// slice.index = index;
-		// index++;
+
 		pizza.push(slice);
 	}
 
 	if (arr.length - i > 0) {
 		var slice = arr.slice(i, arr.length);
-		console.log('Rebanadita: ' + slice.length);
-		// slice.index = index;
 		pizza.push(slice);
 	}
 
@@ -37,12 +30,9 @@ var makePizza = function(arr) {
 var mapMatch = (path) => {
 	var requestsResolved = 0;
 	var masterCoords = [];
-	// console.log(path.matchPoints);
-  var pizza = makePizza(path.matchPoints);
-  // console.log("pizza length", pizza.length);
+	var pizza = makePizza(path.matchPoints);
 	var responsesDone = 0;
 	var promises = [];
-	// console.log(pizza);
 	return new Promise((resolve, reject) => {
 		for (i = 0; i < pizza.length; i++) {
 			promises.push(
@@ -59,11 +49,7 @@ var mapMatch = (path) => {
 
 		Promise.all(promises).then(
 			(resps) => {
-				// for (var h = 0; h < resps.length; h++)
-				// {
-
-        // }
-        console.log("res length", resps.length);
+				console.log('res length', resps.length);
 				for (var i = 0; i < resps.length; i++) {
 					const resp = resps[i];
 					const matchings = resp.body.matchings;
@@ -88,23 +74,17 @@ module.exports = {
 		var i;
 		var j = 1;
 		var pathsCeros = 0;
-		//console.log(res.body);
 		Path.find()
 			.then((paths) => {
-				// console.log('los PATHS ', paths.length);
 				for (i = 0; i < paths.length; i++) {
 					if (paths[i].line.length < 2) {
 						pathsCeros++;
 					}
 				}
 				for (i = 0; i < paths.length; i++) {
-					// console.log(i);
-					// console.log(i, 'i //// paths.length ', paths.length);
 					const path = paths[i];
-					// console.log('path.line.length igual a ', path.line.length);
 
 					if (path.line.length > 1) {
-						// console.log(i);
 						console.log('normal line', path.line.length, 'fixed Line ', path.fixedLine.length);
 						if (path.fixedLine.length > 0) {
 							mapMatch(path)
@@ -113,14 +93,10 @@ module.exports = {
 										return { lat: coord[1], lon: coord[0] };
 									});
 
-									// console.log('pusheando');
-									// console.log(j);
 									path.save();
 									j++;
-									// console.log('la JOTA', j);
-									// console.log("paths.length - pathsCeros ",paths.length - pathsCeros);
+
 									if (j == paths.length - pathsCeros) {
-										// console.log('LAS COORDS SON', daCoords[0]);
 										console.log('SE ESTA SENDEANDO ESTA COSA');
 										res.send(paths);
 									}
