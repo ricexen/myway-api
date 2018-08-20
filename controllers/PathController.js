@@ -114,7 +114,9 @@ module.exports = {
     );
   },
   estimatedTranportArrival(req, res) {
-    Path.findById(req.body.pathId).exec((err, path) => {
+    const userPoint = req.body.userLocation;
+    const pathId = req.body.pathId;
+    Path.findById(pathId).exec((err, path) => {
       if (err) {
         res.status(404).send('Path not found');
       } else {
@@ -128,7 +130,7 @@ module.exports = {
         }
 
         let from = [];
-        let to = req.body.userLocation;
+        let to = userPoint;
 
         for (let i = 0; i < points.length; i++) {
           from = points[i];
