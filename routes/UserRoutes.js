@@ -11,6 +11,8 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   UserController.universityPaths
 );
+router.get("/:id", UserController.user);
+
 
 
 
