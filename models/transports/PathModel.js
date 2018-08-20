@@ -12,14 +12,16 @@ var PathSchema = new Schema(
     color: { type: String, min: 3, max: 6, required: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    firstDeparture: { type: String },
-    lastDeparture: { type: String },
-    departureInterval: { type: Number }
+    firstDeparture: { type: Number, required: false, default: 0 },
+    lastDeparture: { type: Number, required: false, default: 0 },
+    departureInterval: { type: Number, required: false, default: 15 * 60 },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
+    public: { type: Boolean, default: true }
   },
   { toObject: { virtuals: true }, toJSON: { virtuals: true } }
 );
 
-PathSchema.virtual('geojson').get(function() {
+PathSchema.virtual('geojson').get(function () {
   var coords = [];
   for (var j = 0; j < this.line.length; j++) {
     coords.push([this.line[j].lon, this.line[j].lat]);
@@ -29,6 +31,6 @@ PathSchema.virtual('geojson').get(function() {
   geojson.features[0].geometry.coordinates = coords;
   return geojson;
 });
-PathSchema.virtual('currentDeparture').get(function() {});
+PathSchema.virtual('currentDeparture').get(function () { });
 
 module.exports = mongoose.model('Path', PathSchema);

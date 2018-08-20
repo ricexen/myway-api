@@ -23,13 +23,13 @@ const findUniversityKeyPoint = name => {
     findKeyPointsByTags(["university", "universidad"])
       .catch(err => reject(err))
       .then(keypoints => {
-        for(var i = 0; i < keypoints.length; i++){
+        for (var i = 0; i < keypoints.length; i++) {
           const keypoint = keypoints[i]
-          if(String(keypoint.name) === String(name)){
+          if (String(keypoint.name) === String(name)) {
             resolve(keypoint)
           }
         }
-        reject({message: ("No se encontraron rutas para: "+name)})
+        reject({ message: ("No se encontraron rutas para: " + name) })
       });
   });
 };
@@ -84,6 +84,41 @@ const parseGpx = filename => {
   });
 };
 
+const createPath = (name, user, data = {}) => {
+  return new Promise((resolve, reject) => {
+    var path = new Path({
+      name,
+      color: data.color,
+      user: user._id
+    })
+    path.save((err, path) => {
+      if (err) reject(err)
+      else resolve(path)
+    })
+  })
+}
+const findUserPaths = (user) => {
+  return new Promise((resolve, reject) => {
+    Path.find({ user: user._id }).then(paths => {
+      resolve(paths)
+    }).catch(error => {
+      reject(error)
+    })
+  })
+}
+
+const addGeoPoint = (path, lat, lon) => {
+  // var lastPoint = path.line[path.line.length];
+  // console.log(path.line);
+  return new Promise((resolve, reject) => {
+    path.line.push({ lat, lon })
+    path.save((err, path) => {
+      if (err) reject(err)
+      else resolve(path)
+    })
+  })
+}
+
 module.exports = {
   Parse: {
     gpx: parseGpx,
@@ -94,6 +129,11 @@ module.exports = {
   Find: {
     PathsUniversity: findPathsOfUniversity,
     UniversityKeyPoint: findUniversityKeyPoint,
-    KeyPointsByTags: findKeyPointsByTags
+    KeyPointsByTags: findKeyPointsByTags,
+    UserPaths: findUserPaths
+  },
+  Create: createPath,
+  Add: {
+    GeoPoint: addGeoPoint
   }
 };
