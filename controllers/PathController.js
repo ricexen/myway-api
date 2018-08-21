@@ -163,19 +163,7 @@ module.exports = {
           .send()
           .then(response => {
             const travelTime = response.body.routes[0].duration;
-            const points = response.body.routes[0].geometry.coordinates.map(
-              p => {
-                let obj = {};
-                obj.lon = p[0];
-                obj.lat = p[1];
-                return obj;
-              }
-            );
-            const mapboxPath = new Path({
-              line: points,
-              name: 'le route',
-              color: '000'
-            });
+            console.log(travelTime);
             let timeInSeconds = travelTime + path.currentDeparture;
             let date = new Date();
             const currentDate =
@@ -194,9 +182,43 @@ module.exports = {
             }
 
             date.setHours(0, 0, timeInSeconds, 0);
-            res
-              .status(200)
-              .send({ date, shortestPoint, mapboxPath, data: response.body });
+
+            directionsArray = [
+              {
+                coordinates: userPoint
+              },
+              {
+                coordinates: shortestPoint
+              }
+            ];
+
+            directionsClient
+              .getDirections({
+                waypoints: directionsArray,
+                geometries: 'geojson',
+                profile: 'walking',
+                overview: 'full'
+              })
+              .send()
+              .then(response => {
+                const points = response.body.routes[0].geometry.coordinates.map(
+                  p => {
+                    let obj = {};
+                    obj.lon = p[0];
+                    obj.lat = p[1];
+                    return obj;
+                  }
+                );
+                const mapboxPath = new Path({
+                  line: points,
+                  name: 'Caminar',
+                  color: '000'
+                });
+                res.status(200).send({ date, mapboxPath });
+              })
+              .catch(error => {
+                res.status(500).send(error);
+              });
           })
           .catch(error => {
             res.status(500).send(error);
