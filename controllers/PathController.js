@@ -41,7 +41,7 @@ var mapMatch = (path) => {
 						points: pizza[i],
 						profile: 'driving',
 						geometries: 'geojson',
-						tidy: false
+						tidy: true
 					})
 					.send()
 			);
@@ -69,7 +69,7 @@ var mapMatch = (path) => {
 };
 
 module.exports = {
-	paths(req, res) {
+	fixed(req, res) {
 		var daCoords = [];
 		var i;
 		var j = 1;
@@ -109,9 +109,9 @@ module.exports = {
 			.catch((error) => res.status(404).send({ message: 'Path not found', error }));
 	},
 
-	pathsz(req, res) {
+	paths(req, res) {
 		Path.find().exec((err, paths) => {
-			if (err) res.status(500).send(err);
+				if (err) res.status(500).send(err);
 			res.status(200).send(paths);
 		});
 	},

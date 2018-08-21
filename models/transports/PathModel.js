@@ -8,7 +8,7 @@ const mbxMapMatching = require('@mapbox/mapbox-sdk/services/map-matching');
 const mapMatchingClient = mbxMapMatching({
 	accessToken: 'pk.eyJ1IjoiY2FybGFwZXJleiIsImEiOiJjamwyanc3eXMwMGFnM3dxZTdncTFobHJ0In0.3wKa1yFQJGH60nuwAzjuxQ'
 });
-console.log('hola');
+
 var PathSchema = new Schema(
 	{
 		name: { type: String, required: true },
@@ -35,16 +35,25 @@ PathSchema.virtual('geojson').get(function() {
 	return geojson;
 });
 
+PathSchema.virtual('geojsonOriginal').get(function() {
+	var coords = [];
+	for (var j = 0; j < this.line.length; j++) {
+		coords.push([ this.line[j].lon, this.line[j].lat ]);
+	}
+
+	var geojson = JSON.parse(JSON.stringify(basePath));
+	geojson.features[0].properties.name = this.name;
+	geojson.features[0].geometry.coordinates = coords;
+	return geojson;
+});
+
 PathSchema.virtual('matchPoints').get(function() {
 	var points = [];
 	for (var i = 0; i < this.line.length; i++) {
 		var point = {};
 		const geoPoint = this.line[i];
-
 		point.coordinates = [ geoPoint.lon, geoPoint.lat ];
-
 		point.approach = 'curb';
-
 		points.push(point);
 	}
 
