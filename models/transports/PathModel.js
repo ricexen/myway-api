@@ -12,9 +12,9 @@ var PathSchema = new Schema(
     color: { type: String, min: 3, max: 6, required: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    firstDeparture: { type: Number, deafult: 0 },
-    lastDeparture: { type: Number, deafult: 0 },
-    departureInterval: { type: Number, deafult: 15 * 60 }
+    firstDeparture: { type: Number, default: 0 },
+    lastDeparture: { type: Number, default: 0 },
+    departureInterval: { type: Number, default: 15 * 60 }
   },
   { toObject: { virtuals: true }, toJSON: { virtuals: true } }
 );
