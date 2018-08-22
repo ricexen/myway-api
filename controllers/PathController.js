@@ -57,6 +57,7 @@ var mapMatch = (path) => {
 						const match = matchings[j];
 						for (var k = 0; k < match.geometry.coordinates.length; k++) {
 							const coord = match.geometry.coordinates[k];
+							// console.log('coord.length', coord.length);
 							masterCoords.push(coord);
 						}
 					}
@@ -72,7 +73,7 @@ module.exports = {
 	fixed(req, res) {
 		var daCoords = [];
 		var i;
-		var j = 1;
+		var j = 0;
 		var pathsCeros = 0;
 		Path.find()
 			.then((paths) => {
@@ -85,24 +86,25 @@ module.exports = {
 					const path = paths[i];
 
 					if (path.line.length > 1) {
-						console.log('normal line', path.line.length, 'fixed Line ', path.fixedLine.length);
-						if (path.fixedLine.length > 0) {
-							mapMatch(path)
-								.then((finalCoords) => {
-									path.fixedLine = finalCoords.map((coord) => {
-										return { lat: coord[1], lon: coord[0] };
-									});
-
-									path.save();
-									j++;
-
-									if (j == paths.length - pathsCeros) {
-										console.log('SE ESTA SENDEANDO ESTA COSA');
-										res.send(paths);
-									}
-								})
-								.catch((error) => console.log(error));
-						}
+						// console.log('normal line', path.line.length, 'fixed Line ', path.fixedLine.length);
+						// if (path.fixedLine.length > 1) {
+						mapMatch(path)
+							.then((finalCoords) => {
+								path.fixedLine = finalCoords.map((coord) => {
+									return { lat: coord[1], lon: coord[0] };
+								});
+								
+								path.save();
+								j++;
+								// console.log('paths.length - pathsCeros = ', paths.length - pathsCeros);
+								// console.log('j = ', j);
+								if (j == paths.length - pathsCeros) {
+									console.log('SENDING');
+									res.send(paths);
+								}
+							})
+							.catch((error) => console.log(error));
+						// }
 					}
 				}
 			})
@@ -111,7 +113,7 @@ module.exports = {
 
 	paths(req, res) {
 		Path.find().exec((err, paths) => {
-				if (err) res.status(500).send(err);
+			if (err) res.status(500).send(err);
 			res.status(200).send(paths);
 		});
 	},
