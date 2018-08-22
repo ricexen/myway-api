@@ -68,37 +68,38 @@ module.exports = {
 
     const email = req.body.email;
     const password = req.body.password;
-    User.findOne({ email }).then(userLog => {
-      if (!userLog) {
-        errors.email = "Usuario no encontrado";
-        return res.status(404).json(errors);
-      }
-      bcrypt.compare(password, userLog.password).then(isMatch => {
-        if (isMatch) {
-          const payload = {
-            _id: userLog._id,
-            firstname: userLog.firstname,
-            lastname: userLog.lastname,
-            avatar: userLog.avatar,
-            university: userLog.university,
-            birthdate: userLog.birthdate
-          };
-          jwt.sign(
-            payload,
-            keys.secretKey,
-            { expiresIn: 3600 },
-            (err, token) => {
-              var success = "Success Login";
-              var token = "Bearer " + token;
-              res.json({ userLog, token, success });
-            }
-          );
-        } else {
-          errors.password = "Failure Login";
+    User.findOne({ email })
+      .then(userLog => {
+        if (!userLog) {
+          errors.email = "Usuario no encontrado";
           return res.status(404).json(errors);
         }
+        bcrypt.compare(password, userLog.password).then(isMatch => {
+          if (isMatch) {
+            const payload = {
+              _id: userLog._id,
+              firstname: userLog.firstname,
+              lastname: userLog.lastname,
+              avatar: userLog.avatar,
+              university: userLog.university,
+              birthdate: userLog.birthdate
+            };
+            jwt.sign(
+              payload,
+              keys.secretKey,
+              { expiresIn: 3600 },
+              (err, token) => {
+                var success = "Success Login";
+                var token = "Bearer " + token;
+                res.json({ userLog, token, success });
+              }
+            );
+          } else {
+            errors.password = "Failure Login";
+            return res.status(404).json(errors);
+          }
+        });
       });
-    });
   },
 
   edit(req, res) {
