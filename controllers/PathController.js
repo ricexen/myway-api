@@ -24,10 +24,10 @@ module.exports = {
 
   prices(req, res) {
     Path.findById(req.params.pathId).exec((err, path) => {
-      if (err) res.status(404).send("Ruta no encontrada");
+      if (err) res.status(404).send('Ruta no encontrada');
       else {
         Price.find({ _id: { $in: path.prices } }).exec((err, prices) => {
-          if (err) res.status(204).send("No se encontraron precios");
+          if (err) res.status(204).send('No se encontraron precios');
           else res.status(200).send(prices);
         });
       }
@@ -114,7 +114,9 @@ module.exports = {
     );
   },
   estimatedTranportArrival(req, res) {
-    Path.findById(req.body.pathId).exec((err, path) => {
+    const userPoint = req.body.userLocation;
+    const pathId = req.body.pathId;
+    Path.findById(pathId).exec((err, path) => {
       if (err) {
         res.status(404).send('Path not found');
       } else {
@@ -128,7 +130,7 @@ module.exports = {
         }
 
         let from = [];
-        let to = req.body.userLocation;
+        let to = userPoint;
 
         for (let i = 0; i < points.length; i++) {
           from = points[i];
@@ -160,15 +162,63 @@ module.exports = {
           })
           .send()
           .then(response => {
-            // const coords = response.body.routes[0].geometry.coordinates;
-            // var geojson = JSON.parse(JSON.stringify(basePath));
-            // geojson.features[0].properties.name = this.name;
-            // geojson.features[0].geometry.coordinates = coords;
-            // res.status(200).send(geojson);
-            const timeInSeconds = response.body.routes[0].duration;
-            const date = new Date();
-            date.setSeconds(date.getSeconds() + timeInSeconds);
-            res.status(200).send({ date });
+            const travelTime = response.body.routes[0].duration;
+            console.log(travelTime);
+            let timeInSeconds = travelTime + path.currentDeparture;
+            let date = new Date();
+            const currentDate =
+              date.getHours() * 3600 +
+              date.getMinutes() * 60 +
+              date.getSeconds();
+
+            if (currentDate > timeInSeconds) {
+              while (currentDate > timeInSeconds) {
+                timeInSeconds += path.departureInterval;
+              }
+            } else {
+              while (timeInSeconds - currentDate > path.departureInterval) {
+                timeInSeconds -= path.departureInterval;
+              }
+            }
+
+            date.setHours(0, 0, timeInSeconds, 0);
+
+            directionsArray = [
+              {
+                coordinates: userPoint
+              },
+              {
+                coordinates: shortestPoint
+              }
+            ];
+
+            directionsClient
+              .getDirections({
+                waypoints: directionsArray,
+                geometries: 'geojson',
+                profile: 'walking',
+                overview: 'full'
+              })
+              .send()
+              .then(response => {
+                const points = response.body.routes[0].geometry.coordinates.map(
+                  p => {
+                    let obj = {};
+                    obj.lon = p[0];
+                    obj.lat = p[1];
+                    return obj;
+                  }
+                );
+                const mapboxPath = new Path({
+                  line: points,
+                  name: 'Caminar',
+                  color: '000'
+                });
+                res.status(200).send({ date, mapboxPath });
+              })
+              .catch(error => {
+                res.status(500).send(error);
+              });
           })
           .catch(error => {
             res.status(500).send(error);
