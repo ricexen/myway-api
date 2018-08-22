@@ -4,8 +4,9 @@ const KeyPoint = require('../models/transports/KeyPointModel.js');
 const Transport = require('../models/transports/TransportModel.js');
 const Price = require('../models/transports/PriceModel.js');
 const mbxMapMatching = require('@mapbox/mapbox-sdk/services/map-matching');
+require('dotenv').config()
 const mapMatchingClient = mbxMapMatching({
-	accessToken: 'pk.eyJ1IjoiY2FybGFwZXJleiIsImEiOiJjamwyanc3eXMwMGFnM3dxZTdncTFobHJ0In0.3wKa1yFQJGH60nuwAzjuxQ'
+	accessToken: process.env.MAPBOX_KEY
 });
 
 var makePizza = function(arr) {

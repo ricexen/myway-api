@@ -10,6 +10,5 @@ router.get('/:pathId/transport', PathsController.transport);
 router.get('/universities', PathsController.universities);
 router.get('/useruniroutes', passport.authenticate('jwt', { session: false }), PathsController.userUniversityPaths);
 router.get('/list/university/:name', PathsController.university);
-router.post("/estimatedtransportarrival", PathsController.estimatedTranportArrival);
 
 module.exports = router;
