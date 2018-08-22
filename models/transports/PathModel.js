@@ -12,14 +12,14 @@ var PathSchema = new Schema(
     color: { type: String, min: 3, max: 6, required: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    firstDeparture: { type: Number },
-    lastDeparture: { type: Number },
-    departureInterval: { type: Number }
+    firstDeparture: { type: Number, deafult: 0 },
+    lastDeparture: { type: Number, deafult: 0 },
+    departureInterval: { type: Number, deafult: 15 * 60 }
   },
   { toObject: { virtuals: true }, toJSON: { virtuals: true } }
 );
 
-PathSchema.virtual('geojson').get(function() {
+PathSchema.virtual('geojson').get(function () {
   var coords = [];
   for (var j = 0; j < this.line.length; j++) {
     coords.push([this.line[j].lon, this.line[j].lat]);
@@ -29,7 +29,7 @@ PathSchema.virtual('geojson').get(function() {
   geojson.features[0].geometry.coordinates = coords;
   return geojson;
 });
-PathSchema.virtual('currentDeparture').get(function() {
+PathSchema.virtual('currentDeparture').get(function () {
   let date = new Date();
   const minutes = date.getMinutes();
   const hours = date.getHours();

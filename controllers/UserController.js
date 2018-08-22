@@ -72,13 +72,10 @@ module.exports = {
         errors.email = "Usuario no encontrado";
         return res.status(404).json(errors);
       }
-      else {
-        console.log(userLog)
-        return res.status(200).send(userLog);
-      }
       bcrypt.compare(password, userLog.password).then(isMatch => {
         if (isMatch) {
           const payload = {
+            _id: userLog._id,
             firstname: userLog.firstname,
             lastname: userLog.lastname,
             avatar: userLog.avatar,
@@ -90,9 +87,8 @@ module.exports = {
             keys.secretKey,
             { expiresIn: 3600 },
             (err, token) => {
-              userLog.success = "Success Login";
-              userLog.token = "Bearer " + token;
-              res.json(userLog);
+              var token = "Bearer " + token;
+              res.json({userLog, token});
             }
           );
         } else {
