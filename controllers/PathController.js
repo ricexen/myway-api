@@ -87,24 +87,24 @@ module.exports = {
 
 					if (path.line.length > 1) {
 						// console.log('normal line', path.line.length, 'fixed Line ', path.fixedLine.length);
-						// if (path.fixedLine.length > 1) {
-						mapMatch(path)
-							.then((finalCoords) => {
-								path.fixedLine = finalCoords.map((coord) => {
-									return { lat: coord[1], lon: coord[0] };
-								});
-								
-								path.save();
-								j++;
-								// console.log('paths.length - pathsCeros = ', paths.length - pathsCeros);
-								// console.log('j = ', j);
-								if (j == paths.length - pathsCeros) {
-									console.log('SENDING');
-									res.send(paths);
-								}
-							})
-							.catch((error) => console.log(error));
-						// }
+						if (!path.fixedLine && path.fixedLine.length < 1) {
+							mapMatch(path)
+								.then((finalCoords) => {
+									path.fixedLine = finalCoords.map((coord) => {
+										return { lat: coord[1], lon: coord[0] };
+									});
+
+									path.save();
+									j++;
+									// console.log('paths.length - pathsCeros = ', paths.length - pathsCeros);
+									// console.log('j = ', j);
+									if (j == paths.length - pathsCeros) {
+										console.log('SENDING');
+										res.send(paths);
+									}
+								})
+								.catch((error) => console.log(error));
+						}
 					}
 				}
 			})
