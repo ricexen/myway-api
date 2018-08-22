@@ -2,12 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var GeoPoint = require('./GeoPointSchema');
 var basePath = require('./basePath');
-var PathHelper = require('../../helpers/PathsHelper');
-
-const mbxMapMatching = require('@mapbox/mapbox-sdk/services/map-matching');
-const mapMatchingClient = mbxMapMatching({
-	accessToken: 'pk.eyJ1IjoiY2FybGFwZXJleiIsImEiOiJjamwyanc3eXMwMGFnM3dxZTdncTFobHJ0In0.3wKa1yFQJGH60nuwAzjuxQ'
-});
 
 var PathSchema = new Schema(
 	{
@@ -58,6 +52,24 @@ PathSchema.virtual('matchPoints').get(function() {
 	}
 
 	return points;
+});
+PathSchema.virtual('currentDeparture').get(function () {
+  let date = new Date();
+  const minutes = date.getMinutes();
+  const hours = date.getHours();
+  const currentDate = hours * 3600 + minutes * 60;
+  let currentDeparture = this.firstDeparture;
+
+  for (
+    let x = this.firstDeparture;
+    x <= currentDate;
+    x += this.departureInterval
+  ) {
+    if (x >= currentDate - this.departureInterval) {
+      currentDeparture = x;
+    }
+  }
+  return currentDeparture;
 });
 
 module.exports = mongoose.model('Path', PathSchema);

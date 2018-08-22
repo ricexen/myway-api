@@ -24,7 +24,7 @@ module.exports = {
       .catch(err => res.status(500).send(err))
       .then(keypoints => {
         if (keypoints.length === 0)
-          res.status(404).send({ message: "Key Points not found" });
+          res.status(404).send({ message: "Puntos clave no encontrados" });
         else if (req.query.tags) {
           var tags = req.query.tags.split(",");
           res.status(200).send(KeyPointController.mapByTags(tags, keypoints));

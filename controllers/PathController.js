@@ -1,5 +1,4 @@
 const isEmpty = require('./validation/is-empty');
-
 const Path = require('../models/transports/PathModel.js');
 const KeyPoint = require('../models/transports/KeyPointModel.js');
 const Transport = require('../models/transports/TransportModel.js');
@@ -8,7 +7,6 @@ const mbxMapMatching = require('@mapbox/mapbox-sdk/services/map-matching');
 const mapMatchingClient = mbxMapMatching({
 	accessToken: 'pk.eyJ1IjoiY2FybGFwZXJleiIsImEiOiJjamwyanc3eXMwMGFnM3dxZTdncTFobHJ0In0.3wKa1yFQJGH60nuwAzjuxQ'
 });
-const GeoPoint = require('../models/transports/GeoPointSchema');
 
 var makePizza = function(arr) {
 	var i;
