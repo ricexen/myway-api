@@ -1,242 +1,201 @@
 const isEmpty = require('./validation/is-empty');
-
-const basePath = require('../models/transports/basePath');
 const Path = require('../models/transports/PathModel.js');
 const KeyPoint = require('../models/transports/KeyPointModel.js');
 const Transport = require('../models/transports/TransportModel.js');
 const Price = require('../models/transports/PriceModel.js');
-const mbxDirections = require('@mapbox/mapbox-sdk/services/directions');
-const directionsClient = mbxDirections({
-  accessToken:
-    'pk.eyJ1IjoiZGFuaWVsbWVkaW5hIiwiYSI6ImNqajYxMXFyNDBjbWUzcXN3bmk3Z2JqcjAifQ.KfFBvYL667g9_-gblXgvcw'
+const mbxMapMatching = require('@mapbox/mapbox-sdk/services/map-matching');
+require('dotenv').config()
+const mapMatchingClient = mbxMapMatching({
+	accessToken: process.env.MAPBOX_KEY
 });
-const nearestPointOnLine = require('@turf/nearest-point-on-line').default;
-const distance = require('@turf/distance').default;
-const turfHelpers = require('@turf/helpers');
+
+var makePizza = function(arr) {
+	var i;
+	var pizza = [];
+	for (i = 0; i < arr.length; i += 100) {
+		var slice = arr.slice(i, i + 100);
+
+		pizza.push(slice);
+	}
+
+	if (arr.length - i > 0) {
+		var slice = arr.slice(i, arr.length);
+		pizza.push(slice);
+	}
+
+	return pizza;
+};
+
+var mapMatch = (path) => {
+	var requestsResolved = 0;
+	var masterCoords = [];
+	var pizza = makePizza(path.matchPoints);
+	var responsesDone = 0;
+	var promises = [];
+	return new Promise((resolve, reject) => {
+		for (i = 0; i < pizza.length; i++) {
+			promises.push(
+				mapMatchingClient
+					.getMatch({
+						points: pizza[i],
+						profile: 'driving',
+						geometries: 'geojson',
+						tidy: true
+					})
+					.send()
+			);
+		}
+
+		Promise.all(promises).then(
+			(resps) => {
+				console.log('res length', resps.length);
+				for (var i = 0; i < resps.length; i++) {
+					const resp = resps[i];
+					const matchings = resp.body.matchings;
+					for (var j = 0; j < matchings.length; j++) {
+						const match = matchings[j];
+						for (var k = 0; k < match.geometry.coordinates.length; k++) {
+							const coord = match.geometry.coordinates[k];
+							// console.log('coord.length', coord.length);
+							masterCoords.push(coord);
+						}
+					}
+				}
+				resolve(masterCoords);
+			},
+			(error) => reject(error)
+		);
+	});
+};
 
 module.exports = {
-  paths(req, res) {
-    Path.find().exec((err, paths) => {
-      if (err) res.status(500).send(err);
-      res.status(200).send(paths);
-    });
-  },
+	fixed(req, res) {
+		var daCoords = [];
+		var i;
+		var j = 0;
+		var pathsCeros = 0;
+		Path.find()
+			.then((paths) => {
+				for (i = 0; i < paths.length; i++) {
+					if (paths[i].line.length < 2) {
+						pathsCeros++;
+					}
+				}
+				for (i = 0; i < paths.length; i++) {
+					const path = paths[i];
 
-  prices(req, res) {
-    Path.findById(req.params.pathId).exec((err, path) => {
-      if (err) res.status(404).send('Ruta no encontrada');
-      else {
-        Price.find({ _id: { $in: path.prices } }).exec((err, prices) => {
-          if (err) res.status(204).send('No se encontraron precios');
-          else res.status(200).send(prices);
-        });
-      }
-    });
-  },
+					if (path.line.length > 1) {
+						// console.log('normal line', path.line.length, 'fixed Line ', path.fixedLine.length);
+						if (!path.fixedLine && path.fixedLine.length < 1) {
+							mapMatch(path)
+								.then((finalCoords) => {
+									path.fixedLine = finalCoords.map((coord) => {
+										return { lat: coord[1], lon: coord[0] };
+									});
 
-  transport(req, res) {
-    Transport.find({ paths: req.params.pathId }, (err, transports) => {
-      if (err) res.status(500).send(err);
-      else if (!transports)
-        res.status(500).send({ message: 'No transport found' });
-      else res.status(200).send(transports[0]);
-    });
-  },
+									path.save();
+									j++;
+									// console.log('paths.length - pathsCeros = ', paths.length - pathsCeros);
+									// console.log('j = ', j);
+									if (j == paths.length - pathsCeros) {
+										console.log('SENDING');
+										res.send(paths);
+									}
+								})
+								.catch((error) => console.log(error));
+						}
+					}
+				}
+			})
+			.catch((error) => res.status(404).send({ message: 'Path not found', error }));
+	},
 
-  universities(req, res) {
-    KeyPoint.find({ tags: 'university' })
-      .catch(err => res.status(500).send(err))
-      .then(keypoints => {
-        if (keypoints.length == 0)
-          res.status(404).send({ result: { message: 'No keypoints found' } });
-        else {
-          var keypointIds = keypoints.map(keypoint => String(keypoint._id));
-          Path.find()
-            .then(docs => {
-              var paths = [];
-              for (var i = 0; i < docs.length; i++) {
-                const doc = docs[i];
-                for (var j = 0; j < keypointIds.length; j++) {
-                  const id = keypointIds[j];
-                  if (doc.keypoints.map(kp => String(kp)).includes(id))
-                    paths.push(doc);
-                }
-              }
-              res.status(200).send(paths);
-            })
-            .catch(err => res.status(500).send(err));
-        }
-      });
-  },
+	paths(req, res) {
+		Path.find().exec((err, paths) => {
+			if (err) res.status(500).send(err);
+			res.status(200).send(paths);
+		});
+	},
 
-  userUniversityPaths(req, res) {
-    const userUniversity = req.user.university;
-    KeyPoint.findOne({ name: userUniversity }, '_id name')
-      .catch(err => res.status(500).send(err))
-      .then(university => {
-        if (isEmpty(university))
-          res
-            .status(404)
-            .send({ result: { message: 'User University not found' } });
-        else {
-          const universityId = university._id;
+	prices(req, res) {
+		Path.findById(req.params.pathId).exec((err, path) => {
+			if (err) res.status(404).send('Path not found');
+			else {
+				Price.find({ _id: { $in: path.prices } }).exec((err, prices) => {
+					if (err) res.status(204).send('No Prices found');
+					else res.status(200).send(prices);
+				});
+			}
+		});
+	},
 
-          Path.find()
-            .then(paths => {
-              if (isEmpty(paths)) {
-                res.status(404).send({ result: { message: 'No paths found' } });
-              } else {
-                var universityPaths = [];
-                for (let i = 0; i < paths.length; i++) {
-                  const path = paths[i];
-                  const keypoints = path.keypoints;
-                  if (!isEmpty(keypoints)) {
-                    for (let j = 0; j < keypoints.length; j++) {
-                      const keypoint = keypoints[j];
-                      if (keypoint.equals(universityId)) {
-                        universityPaths.push(path);
-                        break;
-                      }
-                    }
-                  }
-                }
-                res.status(200).send(universityPaths);
-              }
-            })
-            .catch(err => res.status(500).send(err));
-        }
-      });
-  },
+	transport(req, res) {
+		Transport.find({ paths: req.params.pathId }, (err, transports) => {
+			if (err) res.status(500).send(err);
+			else if (!transports) res.status(500).send({ message: 'No transport found' });
+			else res.status(200).send(transports[0]);
+		});
+	},
 
-  university(req, res) {
-    KeyPoint.find({ name: req.params.name }).catch(err =>
-      res.status(500).send(err)
-    );
-  },
-  estimatedTranportArrival(req, res) {
-    const userPoint = req.body.userLocation;
-    const pathId = req.body.pathId;
-    Path.findById(pathId).exec((err, path) => {
-      if (err) {
-        res.status(404).send('Path not found');
-      } else {
-        let shortestDistance = 0;
-        let shortestPoint = [];
-        let points = [];
+	universities(req, res) {
+		KeyPoint.find({ tags: 'university' }).catch((err) => res.status(500).send(err)).then((keypoints) => {
+			if (keypoints.length == 0) res.status(404).send({ result: { message: 'No keypoints found' } });
+			else {
+				var keypointIds = keypoints.map((keypoint) => String(keypoint._id));
+				Path.find()
+					.then((docs) => {
+						var paths = [];
+						for (var i = 0; i < docs.length; i++) {
+							const doc = docs[i];
+							for (var j = 0; j < keypointIds.length; j++) {
+								const id = keypointIds[j];
+								if (doc.keypoints.map((kp) => String(kp)).includes(id)) paths.push(doc);
+							}
+						}
+						res.status(200).send(paths);
+					})
+					.catch((err) => res.status(500).send(err));
+			}
+		});
+	},
 
-        for (let x = 0; x < path.line.length; x++) {
-          const point = [path.line[x].lon, path.line[x].lat];
-          points.push(point);
-        }
+	userUniversityPaths(req, res) {
+		const userUniversity = req.user.university;
+		KeyPoint.findOne({ name: userUniversity }, '_id name')
+			.catch((err) => res.status(500).send(err))
+			.then((university) => {
+				if (isEmpty(university)) res.status(404).send({ result: { message: 'User University not found' } });
+				else {
+					const universityId = university._id;
 
-        let from = [];
-        let to = userPoint;
+					Path.find()
+						.then((paths) => {
+							if (isEmpty(paths)) {
+								res.status(404).send({ result: { message: 'No paths found' } });
+							} else {
+								var universityPaths = [];
+								for (let i = 0; i < paths.length; i++) {
+									const path = paths[i];
+									const keypoints = path.keypoints;
+									if (!isEmpty(keypoints)) {
+										for (let j = 0; j < keypoints.length; j++) {
+											const keypoint = keypoints[j];
+											if (keypoint.equals(universityId)) {
+												universityPaths.push(path);
+												break;
+											}
+										}
+									}
+								}
+								res.status(200).send(universityPaths);
+							}
+						})
+						.catch((err) => res.status(500).send(err));
+				}
+			});
+	},
 
-        for (let i = 0; i < points.length; i++) {
-          from = points[i];
-          const tempDist = distance(from, to);
-          if (i == 0) shortestDistance = tempDist;
-          if (tempDist <= shortestDistance) {
-            shortestDistance = tempDist;
-            shortestPoint = points[i];
-          }
-        }
-        const index = points.findIndex(p => p == shortestPoint);
-
-        const userRoute = points.slice(0, index + 1);
-        let directionsArray = [];
-        directionsArray = [
-          {
-            coordinates: userRoute[0]
-          },
-          {
-            coordinates: userRoute[userRoute.length - 1]
-          }
-        ];
-        directionsClient
-          .getDirections({
-            waypoints: directionsArray,
-            geometries: 'geojson',
-            profile: 'driving-traffic',
-            overview: 'full'
-          })
-          .send()
-          .then(response => {
-            const travelTime = response.body.routes[0].duration;
-            console.log(travelTime);
-            let timeInSeconds = travelTime + path.currentDeparture;
-            let date = new Date();
-            const currentDate =
-              date.getHours() * 3600 +
-              date.getMinutes() * 60 +
-              date.getSeconds();
-
-            if (currentDate > timeInSeconds) {
-              while (currentDate > timeInSeconds) {
-                timeInSeconds += path.departureInterval;
-              }
-            } else {
-              while (timeInSeconds - currentDate > path.departureInterval) {
-                timeInSeconds -= path.departureInterval;
-              }
-            }
-
-            date.setHours(0, 0, timeInSeconds, 0);
-
-            directionsArray = [
-              {
-                coordinates: userPoint
-              },
-              {
-                coordinates: shortestPoint
-              }
-            ];
-
-            directionsClient
-              .getDirections({
-                waypoints: directionsArray,
-                geometries: 'geojson',
-                profile: 'walking',
-                overview: 'full'
-              })
-              .send()
-              .then(response => {
-                const points = response.body.routes[0].geometry.coordinates.map(
-                  p => {
-                    let obj = {};
-                    obj.lon = p[0];
-                    obj.lat = p[1];
-                    return obj;
-                  }
-                );
-                const mapboxPath = new Path({
-                  line: points,
-                  name: 'Caminar',
-                  color: '000'
-                });
-                res.status(200).send({ date, mapboxPath });
-              })
-              .catch(error => {
-                res.status(500).send(error);
-              });
-          })
-          .catch(error => {
-            res.status(500).send(error);
-          });
-      }
-    });
-  },
-  shortestDistance(point, line) {
-    let shortestDistance = 0;
-    let shortestPoint = [];
-    for (let i = 0; i < line.length; i++) {
-      const temp = distance(point, line[i]);
-      if (i == 0) shortestDistance = temp;
-      if (temp <= shortestDistance) {
-        shortestDistance = temp;
-        shortestPoint = line[i];
-      }
-    }
-    return shortestPoint;
-  }
+	university(req, res) {
+		KeyPoint.find({ name: req.params.name }).catch((err) => res.status(500).send(err));
+	}
 };
