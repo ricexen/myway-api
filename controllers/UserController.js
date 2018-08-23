@@ -123,6 +123,12 @@ module.exports = {
     });
   },
 
+  user(req, res) {
+    User.findById(req.params.id)
+      .catch(err => res.status(500).send(err))
+      .then(user => res.status(200).send(user));
+  },
+
   universityPaths(req, res) {
     if (!req.user.university) {
       return res.status(404).send({ message: "Universidad no asignada" });

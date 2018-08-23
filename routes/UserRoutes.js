@@ -26,5 +26,6 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   UserController.addGeoPointToPath
 )
+router.get("/:id", UserController.user);
 
 module.exports = router;
