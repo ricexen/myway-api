@@ -12,7 +12,12 @@ var PathSchema = new Schema(
 		keypoints: [ { type: Schema.ObjectId, ref: 'KeyPoint' } ],
 		color: { type: String, min: 3, max: 6, required: false },
 		createdAt: { type: Date, default: Date.now },
-		updatedAt: { type: Date, default: Date.now }
+		updatedAt: { type: Date, default: Date.now },
+    firstDeparture: { type: Number, required: false, default: 0 },
+    lastDeparture: { type: Number, required: false, default: 0 },
+    departureInterval: { type: Number, required: false, default: 15 * 60 },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
+    public: { type: Boolean, default: true }
 	},
 	{ toObject: { virtuals: true }, toJSON: { virtuals: true } }
 );
@@ -71,5 +76,6 @@ PathSchema.virtual('currentDeparture').get(function () {
   }
   return currentDeparture;
 });
+PathSchema.virtual('currentDeparture').get(function () { });
 
 module.exports = mongoose.model('Path', PathSchema);

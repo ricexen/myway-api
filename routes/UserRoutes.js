@@ -11,11 +11,21 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   UserController.universityPaths
 );
+router.post(
+  "/path",
+  passport.authenticate("jwt", { session: false }),
+  UserController.createPath
+);
+router.get(
+  "/path/list",
+  passport.authenticate("jwt", { session: false }),
+  UserController.paths
+)
+router.post(
+  "/path/:id/geopoint",
+  passport.authenticate("jwt", { session: false }),
+  UserController.addGeoPointToPath
+)
 router.get("/:id", UserController.user);
-
-
-
-
-
 
 module.exports = router;

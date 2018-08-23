@@ -3,8 +3,9 @@ var Schema = mongoose.Schema;
 
 var GeoPointSchema = new Schema(
   {
-    lat: Number,
-    lon: Number
+    lat: { type: Number , min: -90, max: 90 },
+    lon: { type: Number , min: -180, max: 180 },
+    createdAt: { type: Date, default: Date.now }
   },
   { _id: false }
 );
