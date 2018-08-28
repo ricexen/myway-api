@@ -177,8 +177,8 @@ module.exports = {
             lastPoint = path.line[path.line.length - 1];
           }
           if (lastPoint && lastPoint.lat == lat && lastPoint.lon == lon) {
-            res.status(304).send({
-              message: "Point no guardado. Es el mismo al anterior",
+            res.status(404).send({
+              message: "Punto no guardado. Es el mismo al anterior",
               path,
               lastPoint
             });
