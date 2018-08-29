@@ -74,7 +74,7 @@ module.exports = {
 		var i;
 		var j = 0;
 		var pathsCeros = 0;
-		Path.find()
+		Path.find({public: true})
 		.then((paths) => {
 			for (i = 0; i < paths.length; i++) {
 				if (paths[i].line.length < 2) {
