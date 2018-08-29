@@ -193,5 +193,20 @@ module.exports = {
           }
         }
       }).catch(error => res.status(500).send({ message: "No se pudo accesar a la base de datos", error }));
+  },
+
+  getPath(req, res) {
+    console.log([req.params.id, req.user._id]);
+    PathHelper.Find.One(req.params.id, req.user._id)
+      .then(response => res.send(response))
+      .catch(error => res.status(404).send(error));
+  },
+
+  deletePath(req, res) {
+    var pathId = req.params.id,
+      user = req.user;
+    PathHelper.Delete.Path(pathId, user)
+      .then(response => res.send(response))
+      .catch(response => res.status(404).send(response));
   }
 };
