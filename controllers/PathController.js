@@ -9,7 +9,7 @@ const mapMatchingClient = mbxMapMatching({
 	accessToken: process.env.MAPBOX_KEY
 });
 
-var makePizza = function(arr) {
+var makePizza = function (arr) {
 	var i;
 	var pizza = [];
 	for (i = 0; i < arr.length; i += 100) {
@@ -111,9 +111,9 @@ module.exports = {
 	},
 
 	paths(req, res) {
-		Path.find().exec((err, paths) => {
+		Path.find({ public: true }).exec((err, paths) => {
 			if (err) res.status(500).send(err);
-			res.status(200).send(paths);
+			else res.status(200).send(paths);
 		});
 	},
 

@@ -3,6 +3,7 @@ const Validation = require("./Util").Validation;
 const Path = require("../models/transports/PathModel");
 const Price = require("../models/transports/PriceModel");
 const KeyPoint = require("../models/transports/KeyPointModel");
+const ObjectId = require("mongoose").Schema.Types.ObjectId;
 
 const prices = require("../database/collections/prices.json");
 
@@ -89,7 +90,8 @@ const createPath = (name, user, data = {}) => {
     var path = new Path({
       name,
       color: data.color,
-      user: user._id
+      user: user._id,
+      public: false
     })
     path.save((err, path) => {
       if (err) reject(err)
@@ -108,8 +110,6 @@ const findUserPaths = (user) => {
 }
 
 const addGeoPoint = (path, lat, lon) => {
-  // var lastPoint = path.line[path.line.length];
-  // console.log(path.line);
   return new Promise((resolve, reject) => {
     path.line.push({ lat, lon })
     path.save((err, path) => {
@@ -117,6 +117,34 @@ const addGeoPoint = (path, lat, lon) => {
       else resolve(path)
     })
   })
+}
+
+const findOnePath = (id, userId) => {
+  return new Promise((resolve, reject) => {
+    Path.findOne({ _id: ObjectId(id), user: ObjectId(userId) })
+      .then(path => {
+        console.log(path);
+        if (!path) reject({ message: "No se encontro la ruta" });
+        else resolve({ message: "Ruta encontrada", path });
+      })
+      .catch(error => reject({ message: "No se pudo buscar la ruta", error }))
+  })
+}
+
+const deletePath = (pathId, user) => {
+  return new Promise((resolve, reject) => {
+    Path.findOne({ _id: pathId, user: user._id })
+      .then(path => {
+        if (!path) reject({ message: "No se encontro la ruta" });
+        Path.deleteOne(path, function (error) {
+          if (error) reject({ message: "No se pudo eliminar la ruta", error });
+          else resolve({ message: "Ruta eliminada", path });
+        })
+      })
+      .catch(error => {
+        reject({ message: "No se pudo buscar la ruta. Intente de nuevo.", error });
+      });
+  });
 }
 
 module.exports = {
@@ -130,10 +158,14 @@ module.exports = {
     PathsUniversity: findPathsOfUniversity,
     UniversityKeyPoint: findUniversityKeyPoint,
     KeyPointsByTags: findKeyPointsByTags,
-    UserPaths: findUserPaths
+    UserPaths: findUserPaths,
+    One: findOnePath
   },
   Create: createPath,
   Add: {
     GeoPoint: addGeoPoint
+  },
+  Delete: {
+    Path: deletePath
   }
 };
