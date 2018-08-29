@@ -75,29 +75,29 @@ module.exports = {
 		var j = 0;
 		var pathsCeros = 0;
 		Path.find()
-			.then((paths) => {
-				for (i = 0; i < paths.length; i++) {
-					if (paths[i].line.length < 2) {
-						pathsCeros++;
-					}
+		.then((paths) => {
+			for (i = 0; i < paths.length; i++) {
+				if (paths[i].line.length < 2) {
+					pathsCeros++;
 				}
-				for (i = 0; i < paths.length; i++) {
-					const path = paths[i];
-
-					if (path.line.length > 1) {
-						// console.log('normal line', path.line.length, 'fixed Line ', path.fixedLine.length);
-						if (!path.fixedLine && path.fixedLine.length < 1) {
-							mapMatch(path)
-								.then((finalCoords) => {
-									path.fixedLine = finalCoords.map((coord) => {
-										return { lat: coord[1], lon: coord[0] };
-									});
-
-									path.save();
-									j++;
-									// console.log('paths.length - pathsCeros = ', paths.length - pathsCeros);
-									// console.log('j = ', j);
-									if (j == paths.length - pathsCeros) {
+			}
+			for (i = 0; i < paths.length; i++) {
+				const path = paths[i];
+				
+				if (path.line.length > 1) {
+					// console.log('normal line', path.line.length, 'fixed Line ', path.fixedLine.length);
+					if (path.fixedLine.length < 1) {
+						mapMatch(path)
+						.then((finalCoords) => {
+							path.fixedLine = finalCoords.map((coord) => {
+								return { lat: coord[1], lon: coord[0] };
+							});
+							
+							path.save();
+							j++;
+							// console.log('paths.length - pathsCeros = ', paths.length - pathsCeros);
+							// console.log('j = ', j);
+							if (j == paths.length - pathsCeros) {
 										console.log('SENDING');
 										res.send(paths);
 									}
